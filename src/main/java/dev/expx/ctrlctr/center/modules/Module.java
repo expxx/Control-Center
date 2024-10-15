@@ -26,11 +26,6 @@ import java.util.List;
 public abstract class Module {
 
     /**
-     * Utility class, do not instantiate.
-     */
-    private Module() {}
-
-    /**
      * The plugin instance.
      */
     @Getter @Setter

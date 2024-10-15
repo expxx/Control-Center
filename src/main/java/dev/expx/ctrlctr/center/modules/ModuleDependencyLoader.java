@@ -9,11 +9,6 @@ import dev.expx.ctrlctr.center.util.DirectMavenResolver;
 public abstract class ModuleDependencyLoader {
 
     /**
-     * Utility class, do not instantiate.
-     */
-    private ModuleDependencyLoader() {}
-
-    /**
      * Loads the dependencies for the module.
      * @param mavenResolver The maven resolver to use.
      */

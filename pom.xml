@@ -15,6 +15,14 @@
     </properties>
 
     <distributionManagement>
+        <snapshotRepository>
+            <id>the-cavern</id>
+            <url>https://repo.expx.dev/repository/public-snapshots/</url>
+        </snapshotRepository>
+        <repository>
+            <id>the-cavern</id>
+            <url>https://repo.expx.dev/repository/public-releases/</url>
+        </repository>
         <site>
             <id>the-cavern</id>
             <url>https://repo.expx.dev/content/sites/site/</url>
