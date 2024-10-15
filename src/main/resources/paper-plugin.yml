@@ -1,0 +1,17 @@
+name: Control-Center
+version: '${project.version}'
+main: dev.expx.ctrlctr.center.Ctrlctr
+api-version: '1.21'
+bootstrapper: dev.expx.ctrlctr.center.Bootstrapper
+loader: dev.expx.ctrlctr.center.Loader
+
+dependencies:
+  server:
+    Vault:
+      join-classpath: true
+      load:
+      required: true
+    PlaceholderAPI:
+      join-classpath: true
+      load: BEFORE
+      required: true

@@ -1,0 +1,18 @@
+mongo:
+    ip: ""
+    port: 25
+    user: ""
+    pass: ""
+    db: ""
+redis:
+    ip: ""
+    port: 25
+    password: ""
+    channel: ""
+rabbit:
+    ip: ""
+    port: 25
+    user: ""
+    pass: ""
+
+config-version: 2
