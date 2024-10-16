@@ -1,5 +1,6 @@
 package dev.expx.ctrlctr.center;
 
+import dev.expx.ctrlctr.center.modules.ModuleManager;
 import io.papermc.paper.plugin.bootstrap.BootstrapContext;
 import io.papermc.paper.plugin.bootstrap.PluginBootstrap;
 import io.papermc.paper.plugin.bootstrap.PluginProviderContext;
@@ -55,63 +56,6 @@ public class Bootstrapper implements PluginBootstrap {
         log.info("RAM USED: {}", (hal.getMemory().getTotal() - hal.getMemory().getAvailable()) / 1024);
         log.info("VIRTUAL MEMORY SWAP TOTAL: {}", hal.getMemory().getVirtualMemory().getSwapTotal() / 1024);
         log.info("VIRTUAL MEMORY SWAP USED: {}", hal.getMemory().getVirtualMemory().getSwapUsed() / 1024);
-        log.info("SYSTEM MODEL: {}", hal.getComputerSystem().getModel());
-        log.info("SYSTEM MANUFACTURER: {}", hal.getComputerSystem().getManufacturer());
-        log.info("SYSTEM FIRMWARE: {}", hal.getComputerSystem().getFirmware());
-        log.info("SYSTEM SERIAL: {}", hal.getComputerSystem().getSerialNumber());
-        log.info("BOARD MODEL: {}", hal.getComputerSystem().getBaseboard().getModel());
-        log.info("BOARD MANUFACTURER: {}", hal.getComputerSystem().getBaseboard().getManufacturer());
-        log.info("BOARD VERSION: {}", hal.getComputerSystem().getBaseboard().getVersion());
-        log.info("BOARD SERIAL: {}", hal.getComputerSystem().getBaseboard().getSerialNumber());
-        int i = 0;
-        for(PhysicalMemory memory : hal.getMemory().getPhysicalMemory()) {
-            i++;
-            log.info("-- RAM {}:", i);
-            log.info("    - MANUFACTURER: {}", memory.getManufacturer());
-            log.info("    - TYPE: {}", memory.getMemoryType());
-            log.info("    - CAPACITY: {}", memory.getCapacity());
-            log.info("    - CLOCK SPEED: {}", memory.getClockSpeed());
-        }
-        i = 0;
-        for(PowerSource source : hal.getPowerSources()) {
-            i++;
-            log.info("-- POWER SOURCE {}:", i);
-            log.info("    - NAME: {}", source.getName());
-            log.info("    - AMPERAGE: {}", source.getAmperage());
-            log.info("    - MANUFACTURER: {}", source.getManufacturer());
-            log.info("    - MANUFACTUER DATE: {}", source.getManufactureDate());
-            log.info("    - DEVICE NAME: {}", source.getDeviceName());
-            log.info("    - POWER USAGE: {}", source.getPowerUsageRate());
-            log.info("    - TEMPERATURE: {}", source.getTemperature());
-            log.info("    - CURRENT CAPACITY: {}", source.getCurrentCapacity());
-            log.info("    - CYCLE COUNT: {}", source.getCycleCount());
-            log.info("    - MAX CAPACITY: {}", source.getMaxCapacity());
-            log.info("    - VOLTAGE: {}", source.getVoltage());
-            log.info("    - CHARGING: {}", source.isCharging());
-            log.info("    - DISCHARGING: {}", source.isDischarging());
-            log.info("    - POWER ONLINE: {}", source.isPowerOnLine());
-        }
-        i = 0;
-        for(NetworkIF nif : hal.getNetworkIFs()) {
-            i++;
-            log.info("-- NETWORK INTERFACE {}:", i);
-            log.info("    - NAME: {}", nif.getName());
-            log.info("    - DISPLAY NAME: {}", nif.getDisplayName());
-            log.info("    - BYTES IN: {}", nif.getBytesRecv());
-            log.info("    - BYTES OUT: {}", nif.getBytesSent());
-            log.info("    - ALIAS: {}", nif.getIfAlias());
-            log.info("    - TYPE: {}", nif.getIfType());
-            log.info("    - DROPS: {}", nif.getInDrops());
-            log.info("    - IN ERRORS: {}", nif.getInErrors());
-            log.info("    - OUT ERRORS: {}", nif.getOutErrors());
-            log.info("    - IPv4: {}", nif.getIPv4addr() == null ? "Unknown" : nif.getIPv4addr());
-            log.info("    - IPv6: {}", nif.getIPv6addr() == null ? "Unknown" : nif.getIPv6addr());
-            log.info("    - MAC: {}", nif.getMacaddr());
-            log.info("    - MTU: {}", nif.getMTU());
-            log.info("    - PACKETS IN: {}", nif.getPacketsRecv());
-            log.info("    - PACKETS OUT: {}", nif.getPacketsSent());
-            log.info("    - SPEED: {}", nif.getSpeed());
-        }
         log.info("  -----  SYSINFO  -----  ");
         log.info("");
         log.info("Done!");

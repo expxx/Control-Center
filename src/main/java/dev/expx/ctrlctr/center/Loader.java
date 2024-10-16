@@ -32,6 +32,7 @@ public class Loader implements PluginLoader {
      */
     @Override
     public void classloader(@NotNull PluginClasspathBuilder pluginClasspathBuilder) {
+        ModuleManager.updateFolder(pluginClasspathBuilder.getContext().getDataDirectory());
         ModuleManager.setupModuleLoader(pluginClasspathBuilder.getContext().getDataDirectory());
         DirectMavenResolver resolver = new DirectMavenResolver();
 

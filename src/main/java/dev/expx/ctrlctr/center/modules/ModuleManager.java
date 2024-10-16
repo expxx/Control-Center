@@ -1,18 +1,27 @@
 package dev.expx.ctrlctr.center.modules;
 
+import com.moandjiezana.toml.Toml;
 import dev.expx.ctrlctr.center.Ctrlctr;
 import dev.expx.ctrlctr.center.logger.Log;
+import dev.expx.ctrlctr.center.logger.errors.ModuleLoadException;
 import dev.expx.ctrlctr.center.util.DirectMavenResolver;
+import io.socket.client.IO;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.logging.Level;
 
 /**
@@ -145,6 +154,58 @@ public class ModuleManager {
     }
 
     /**
+     * Check for module updates if
+     * the update folder exists
+     */
+    public static void updateFolder(@NotNull Path dataDir) {
+        new Thread(() -> {
+            logger.info("Checking for module updates");
+            Path updatePath = new File(dataDir.toFile(), "updates").toPath();
+            Path modulePath = new File(dataDir.toFile(), "modules").toPath();
+
+            try {
+                if(!updatePath.toFile().exists() || !modulePath.toFile().exists()) {
+                    logger.info("Creating update and module directories");
+                    updatePath.toFile().mkdirs();
+                    modulePath.toFile().mkdirs();
+                }
+                logger.info("Checking for updates in: {}", updatePath.toFile().getAbsolutePath());
+                if(updatePath.toFile().listFiles() == null) return;
+                List<File> jars = Arrays.asList(Objects.requireNonNull(updatePath.toFile().listFiles()));
+                jars.forEach(e -> {
+                    logger.info("Checking update: {}", e.getName());
+                    try {
+                        String updateId = getModuleId(e.toPath());
+                        logger.info("Update ID: {}", updateId);
+                        if(updateId != null) {
+                            if(modulePath.toFile().listFiles() == null) return;
+                            logger.info("Module path not empty");
+                            List<File> moduleJars = Arrays.asList(Objects.requireNonNull(modulePath.toFile().listFiles()));
+                            for(File moduleJar : moduleJars) {
+                                if(moduleJar.isDirectory()) continue;
+                                logger.info("Checking module: {}", moduleJar.getName());
+                                String moduleId = getModuleId(moduleJar.toPath());
+                                if(moduleId != null && moduleId.equals(updateId)) {
+                                    Files.delete(moduleJar.toPath());
+                                    Files.move(e.toPath(), moduleJar.toPath());
+                                    logger.info("Updated module: {}", updateId);
+                                    break;
+                                }
+                            }
+                        }
+                        logger.info("Failed to update module: {}", e.getName());
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                        throw new ModuleLoadException(ex.getMessage());
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+    /**
      * Install all modules
      */
     public static void installModules() {
@@ -218,5 +279,21 @@ public class ModuleManager {
             }
             module.setActive(false);
         }
+    }
+
+    protected static String getModuleId(Path jarFilePath) throws IOException {
+        try (JarFile jarFile = new JarFile(jarFilePath.toFile())) {
+            JarEntry tomlEntry = jarFile.getJarEntry("module.toml");
+
+            if (tomlEntry != null) {
+                logger.info("Found module file: {}", tomlEntry.getName());
+                try (InputStream inputStream = jarFile.getInputStream(tomlEntry)) {
+                    Toml toml = new Toml().read(inputStream);
+                    logger.info("Found module toml for name: {}", toml.getString("name"));
+                    return toml.getString("id");
+                }
+            }
+        }
+        return null;
     }
 }

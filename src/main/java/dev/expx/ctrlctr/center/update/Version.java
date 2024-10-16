@@ -16,6 +16,8 @@ public record Version(
         @NotNull String currentVersion,
         @NotNull String directDownloadUrl,
         @Nullable String latestVersion,
-        @Nullable String downloadURL
+        @Nullable String downloadURL,
+        @Nullable String expectedSha1,
+        @Nullable String expectedMd5
 ) {
 }

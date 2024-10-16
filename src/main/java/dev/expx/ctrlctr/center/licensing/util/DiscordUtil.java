@@ -31,7 +31,7 @@ public class DiscordUtil {
                     HashMap.newHashMap(0),
                     false,
                     null
-            ).getAsJsonObject("data");
+            );
             JsonObject data = object.getAsJsonObject("data");
             if (data.has("global_name"))
                 return data.get("global_name").getAsString();

@@ -65,11 +65,11 @@ public class CamLicense {
             boolean valid = responseData.get("valid").getAsBoolean();
             String latest = responseData.get("latest").getAsString();
             if (!valid) {
-                return new CamLicenseResp(false, null, null, false, latest, responseData.get("safeToShow").getAsString());
+                return new CamLicenseResp(false, null, responseData.get("customer").getAsString(), !Objects.equals(latest, version), latest, responseData.get("safeToShow").getAsString());
             }
             String local = responseData.get("localKey").getAsString();
             socket();
-            return new CamLicenseResp(valid, local, responseData.get("customer").getAsString(), false, latest,"LocalKey Valid");
+            return new CamLicenseResp(valid, local, responseData.get("customer").getAsString(), !Objects.equals(latest, version), latest,"LocalKey Valid");
         } catch (Exception e) {
             // not valid
             return new CamLicenseResp(false, null, null, false, null, "Invalid License");

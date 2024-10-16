@@ -18,6 +18,9 @@ import dev.expx.ctrlctr.center.modules.ModuleManager;
 import dev.expx.ctrlctr.center.papi.PAPIExpansion;
 import dev.expx.ctrlctr.center.storage.Mongo;
 import dev.expx.ctrlctr.center.storage.schemas.PlayerData;
+import dev.expx.ctrlctr.center.update.UpdateDownloader;
+import dev.expx.ctrlctr.center.update.UpdateHandler;
+import dev.expx.ctrlctr.center.update.Version;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
@@ -35,10 +38,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Main class for the Control Center plugin.
@@ -182,17 +182,11 @@ public final class Ctrlctr extends JavaPlugin {
             String currentVersion = getPluginMeta().getVersion();
             JsonObject metadata = obj.getAsJsonObject("metadata");
             JsonObject versioning = metadata.getAsJsonObject("versioning");
-            String lastUpdated = versioning.get("lastUpdated").getAsString();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-            LocalDateTime parsedTime = LocalDateTime.parse(lastUpdated, formatter);
-            LocalDateTime now = LocalDateTime.now();
-            Duration dur = Duration.between(now, parsedTime);
-            String human = convertToHumanReadable(dur);
             String latestVersion = versioning.get("release").getAsString();
             if(!Objects.equals(currentVersion, latestVersion)) {
                 getLogger().warning("New version available: " + latestVersion);
-                getLogger().warning("Last updated: " + human);
             }
+            loadUpdates(UpdateHandler.checkForUpdates());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -265,6 +259,33 @@ public final class Ctrlctr extends JavaPlugin {
         } else {
             return d.toDays() / 7 + " weeks ago";
         }
+    }
+
+    /**
+     * Loads updates for modules.
+     * @param updates Updates
+     */
+    @ApiStatus.Internal
+    public void loadUpdates(Map<Module, Version> updates) {
+        new Thread(() -> {
+            if(!updates.isEmpty()) {
+                getLogger().warning("Updates available:");
+                for(Map.Entry<Module, Version> entry : updates.entrySet()) {
+                    getLogger().warning("  " + entry.getKey().getData().name + " - " + entry.getValue().latestVersion() + " (Current: " + entry.getValue().currentVersion() + ")");
+                    if(getMainConfig().getBoolean("auto-update-enabled")) {
+                        getLogger().warning("  Updating...");
+                        UpdateDownloader.download(
+                                entry.getValue().directDownloadUrl(),
+                                new File(getDataFolder(), "updates/" + entry.getKey().getData().name + "-" + entry.getValue().latestVersion() + ".jar").toPath(),
+                                entry.getValue().expectedSha1(),
+                                entry.getValue().expectedMd5()
+                        );
+                    }
+                }
+                getLogger().info("Updates have been downloaded.");
+                getLogger().info("Please restart the server to apply the updates.");
+            }
+        }).start();
     }
 
 }

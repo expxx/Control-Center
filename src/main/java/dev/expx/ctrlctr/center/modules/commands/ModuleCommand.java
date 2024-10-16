@@ -2,10 +2,7 @@ package dev.expx.ctrlctr.center.modules.commands;
 
 import dev.expx.ctrlctr.center.Ctrlctr;
 import dev.expx.ctrlctr.center.modules.Module;
-import dev.expx.ctrlctr.center.modules.commands.sub.DisableCommand;
-import dev.expx.ctrlctr.center.modules.commands.sub.EnableCommand;
-import dev.expx.ctrlctr.center.modules.commands.sub.InfoCommand;
-import dev.expx.ctrlctr.center.modules.commands.sub.ReloadCommand;
+import dev.expx.ctrlctr.center.modules.commands.sub.*;
 import dev.expx.ctrlctr.center.util.TextUtil;
 import io.papermc.paper.command.brigadier.BasicCommand;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
@@ -63,16 +60,18 @@ public class ModuleCommand implements BasicCommand {
             new InfoCommand(stack, args);
         } else if(args[0].equals("reload")) {
             new ReloadCommand(stack, args);
+        } else if(args[0].equals("update")) {
+            new UpdatesCommand(stack, args);
         }
     }
 
 
     @Override @SuppressWarnings("UnstableApiUsage")
     public @NotNull Collection<String> suggest(@NotNull CommandSourceStack commandSourceStack, @NotNull String[] args) {
-        List<String> actionList = List.of("disable", "enable", "info", "reload");
+        List<String> actionList = List.of("disable", "enable", "info", "reload", "update");
         Collection<Module> moduleList = Ctrlctr.getModules().values();
         if(actionList.stream().filter(action -> action.equals(args[0])).toList().isEmpty())
-            return List.of("disable", "enable", "info", "reload");
+            return actionList;
         else if(moduleList.stream().filter(module -> module.getData().name.equals(args[1])).toList().isEmpty())
             return moduleList.stream().map(module -> module.getData().id).toList();
         return List.of();

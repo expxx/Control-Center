@@ -1,3 +1,4 @@
 debug: true
+auto-update-enabled: false
 
-config-version: 1
+config-version: 2
