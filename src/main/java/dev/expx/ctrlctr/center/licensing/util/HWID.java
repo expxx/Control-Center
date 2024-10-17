@@ -32,7 +32,7 @@ public class HWID {
             if (!readFrom.exists()) {
                 // Write to file
                 UUID uuid = UUID.randomUUID();
-                if(System.getenv("P_SERVER_UUID") != null) uuid = UUID.fromString(System.getenv("P_SERVER_UUID"));
+                if(System.getenv("P_SERVER_UUID") != null) return UUID.fromString(System.getenv("P_SERVER_UUID"));
                 Files.write(readFrom.toPath(), uuid.toString().getBytes());
                 return uuid;
             } else {
