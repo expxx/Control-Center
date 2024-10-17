@@ -24,7 +24,7 @@ public class XMLRequest {
     }
 
     /**
-     * Sends an HTTP request to a server and returns a JSON response.
+     * Sends an HTTP request to a server and returns an XML response.
      * @param url The URL to send the request to
      * @param requestMethod The HTTP request method to use
      * @param requestProperties The request properties to send

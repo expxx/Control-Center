@@ -1,4 +1,4 @@
-package dev.expx.ctrlctr.center.communication.rabbit.data;
+package dev.expx.ctrlctr.center.communication.data;
 
 import lombok.Getter;
 

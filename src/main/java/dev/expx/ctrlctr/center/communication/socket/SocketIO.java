@@ -1,7 +1,7 @@
 package dev.expx.ctrlctr.center.communication.socket;
 
 import dev.expx.ctrlctr.center.Ctrlctr;
-import dev.expx.ctrlctr.center.communication.rabbit.data.ConnSet;
+import dev.expx.ctrlctr.center.communication.data.ConnSet;
 import dev.expx.ctrlctr.center.logger.Log;
 import dev.expx.ctrlctr.center.logger.errors.StorageConnectionException;
 import io.socket.client.Ack;
@@ -27,12 +27,8 @@ import java.util.logging.Level;
 @SuppressWarnings("unused")
 public class SocketIO {
 
-    private SocketIO() {
-    }
+    private SocketIO() {}
 
-    /**
-     * The socket.
-     */
     @Getter
     @Setter
     public static Socket io;

@@ -15,6 +15,8 @@ import java.util.logging.Level;
 
 /**
  * Reloads player data.
+ *
+ * @usage This is designed to be called from the parent plugin for reloading player data. It may be removed in the future, as it was just a testing command.
  */
 @SuppressWarnings("UnstableApiUsage") @ApiStatus.Internal
 public class ReloadPlayerData implements BasicCommand {

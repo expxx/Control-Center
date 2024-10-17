@@ -25,7 +25,6 @@ public class UUIDUtils {
     /**
      * Turn a Minecraft Username into a Minecraft
      * UUID
-     *
      * @param username Username of the player to look up
      * @return String UUID
      */
@@ -34,7 +33,7 @@ public class UUIDUtils {
             JsonObject obj = JSONRequest.request(
                     "https://api.mojang.com/users/profiles/minecraft/" + username,
                     "GET",
-                    new HashMap<>(),
+                    HashMap.newHashMap(0),
                     false,
                     null
             );

@@ -3,7 +3,6 @@ package dev.expx.ctrlctr.center.papi;
 import dev.expx.ctrlctr.center.Ctrlctr;
 import dev.expx.ctrlctr.center.datastore.Registry;
 import dev.expx.ctrlctr.center.datastore.implementations.EclipseStore;
-import dev.expx.ctrlctr.center.logger.Log;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
@@ -11,13 +10,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
-import java.util.logging.Level;
+
 
 /**
  * PlaceholderAPI expansion for Ctrlctr. This
  * class is responsible for handling all
  * placeholders registered in the plugin.
  */
+@ApiStatus.Internal
 public class PAPIExpansion extends PlaceholderExpansion {
 
     /**
@@ -78,7 +78,6 @@ public class PAPIExpansion extends PlaceholderExpansion {
      * @param id The identifier of the placeholder.
      * @return An {@link String} representing the placeholder value.
      */
-    @ApiStatus.Internal
     public String receive(@NotNull final Player p, @NotNull final String id) {
         final Optional<PlaceholderHandler<Player, String>> handler = handlers.get(id);
         return handler.map(m -> m.handle(p, id)).orElse(id);
@@ -90,6 +89,7 @@ public class PAPIExpansion extends PlaceholderExpansion {
      * @param <S> The type of the placeholder.
      */
     @FunctionalInterface
+    @ApiStatus.AvailableSince("1.0.4")
     public interface PlaceholderHandler<P, S> {
 
         /**

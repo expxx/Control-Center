@@ -7,7 +7,8 @@ import org.jetbrains.annotations.Nullable;
 
 
 /**
- * Represents a packet that is sent between the server and the client.
+ * Represents a packet that is sent between 2 or more
+ * locations to transmit data.
  */
 @Getter
 public final class Packet {

@@ -11,6 +11,7 @@ public abstract class ModuleDependencyLoader {
     /**
      * Loads the dependencies for the module.
      * @param mavenResolver The maven resolver to use.
+     * @usage See {@link DirectMavenResolver} for usage.
      */
     public abstract void loadDependencies(DirectMavenResolver mavenResolver);
 

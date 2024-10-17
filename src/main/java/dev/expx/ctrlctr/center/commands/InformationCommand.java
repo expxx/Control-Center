@@ -9,6 +9,8 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Information command.
+ *
+ * @usage This is designed to be called from the parent plugin for displaying information about the plugin to the end user.
  */
 @SuppressWarnings("UnstableApiUsage") @ApiStatus.Internal
 public class InformationCommand implements BasicCommand {

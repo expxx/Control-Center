@@ -1,6 +1,5 @@
 package dev.expx.ctrlctr.center.util;
 
-import dev.expx.ctrlctr.center.modules.Module;
 import io.papermc.paper.plugin.loader.library.ClassPathLibrary;
 import io.papermc.paper.plugin.loader.library.LibraryLoadingException;
 import io.papermc.paper.plugin.loader.library.LibraryStore;

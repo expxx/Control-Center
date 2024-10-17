@@ -75,14 +75,13 @@ public class CamLicense {
             return new CamLicenseResp(false, null, null, false, null, "Invalid License");
         }
     }
-    private Socket io;
 
     /**
      * Create a socket connection.
      */
     public void socket() {
         URI uri = URI.create("https://auth.expx.dev");
-        io = IO.socket(uri).connect();
+        Socket io = IO.socket(uri).connect();
 
         io.on("require", objects -> {
             if(objects[0].equals("auth") && objects[1] instanceof Ack ack) {

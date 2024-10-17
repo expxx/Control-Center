@@ -4,7 +4,8 @@ package dev.expx.ctrlctr.center.communication.data;
 import lombok.Getter;
 
 /**
- * Represents a data set.
+ * Represents a data set, used as a key-value pair while
+ * transmitting data between the 2 or more locations.
  */
 @Getter
 public final class DataSet {

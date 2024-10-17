@@ -6,8 +6,8 @@ import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
 import dev.expx.ctrlctr.center.Ctrlctr;
 import dev.expx.ctrlctr.center.communication.data.Packet;
-import dev.expx.ctrlctr.center.communication.rabbit.data.AuthSet;
-import dev.expx.ctrlctr.center.communication.rabbit.data.ConnSet;
+import dev.expx.ctrlctr.center.communication.data.AuthSet;
+import dev.expx.ctrlctr.center.communication.data.ConnSet;
 import dev.expx.ctrlctr.center.datastore.Registry;
 import dev.expx.ctrlctr.center.datastore.implementations.EclipseStore;
 import dev.expx.ctrlctr.center.logger.Log;
@@ -129,8 +129,10 @@ public class Rabbit {
     }
 
     /**
-     * Send a message to a specific queue
-     * in RabbitMQ with a packet.
+     * Send a message through the
+     * RabbitMQ connection this
+     * instance is connected to.
+     *
      * @param packet The packet to send
      */
     public void send(Packet packet) {

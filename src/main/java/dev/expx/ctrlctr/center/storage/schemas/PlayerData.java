@@ -10,6 +10,8 @@ import java.util.UUID;
 
 /**
  * Player Data Schema
+ *
+ * @usage Internally, not really intended to store any actual data, more-so just for determining whether a player's data is currently in-use somewhere so we don't get duplicate data.
  */
 @Getter @Setter
 public class PlayerData implements Serializable {

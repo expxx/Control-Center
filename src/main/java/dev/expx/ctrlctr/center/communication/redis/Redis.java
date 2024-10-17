@@ -84,6 +84,8 @@ public class Redis {
 
     /**
      * Subscribes to the Redis channel.
+     * Used internally to receive and
+     * relay messages to the handlers.
      */
     @ApiStatus.Internal
     public void subscribe() {
@@ -160,7 +162,7 @@ public class Redis {
     }
 
     /**
-     * Gets a packet from the Redis server with a Time To Live.
+     * Adds a packet to the Redis server with a Time To Live.
      * @param key The key to get the packet from.
      * @param ttlInSeconds The Time To Live of the packet.
      * @param head The header of the packet.
