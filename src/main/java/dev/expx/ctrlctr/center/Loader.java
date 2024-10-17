@@ -32,66 +32,73 @@ public class Loader implements PluginLoader {
      */
     @Override
     public void classloader(@NotNull PluginClasspathBuilder pluginClasspathBuilder) {
-        ModuleManager.updateFolder(pluginClasspathBuilder.getContext().getDataDirectory());
-        ModuleManager.setupModuleLoader(pluginClasspathBuilder.getContext().getDataDirectory());
-        DirectMavenResolver resolver = new DirectMavenResolver();
+        try {
+            Thread t = ModuleManager.updateFolder(pluginClasspathBuilder.getContext().getDataDirectory());
+            t.start();
+            t.join();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } finally {
+            ModuleManager.setupModuleLoader(pluginClasspathBuilder.getContext().getDataDirectory());
+            DirectMavenResolver resolver = new DirectMavenResolver();
 
-        Class<?> clazz = Ctrlctr.class;
-        resolver.addRepository(clazz, new RemoteRepository.Builder("central", "default", "https://repo.maven.apache.org/maven2/").build());
-        resolver.addRepository(clazz, new RemoteRepository.Builder("jitpack", "default", "https://jitpack.io").build());
-        resolver.addRepository(clazz, new RemoteRepository.Builder("papermc", "default", "https://papermc.io/repo/repository/maven-public/").build());
-        resolver.addRepository(clazz, new RemoteRepository.Builder("sonatype", "default", "https://oss.sonatype.org/content/groups/public/").build());
-        resolver.addRepository(clazz, new RemoteRepository.Builder("the-cavern-tp", "default", "https://repo.expx.dev/repository/third-party/").build());
+            Class<?> clazz = Ctrlctr.class;
+            resolver.addRepository(clazz, new RemoteRepository.Builder("central", "default", "https://repo.maven.apache.org/maven2/").build());
+            resolver.addRepository(clazz, new RemoteRepository.Builder("jitpack", "default", "https://jitpack.io").build());
+            resolver.addRepository(clazz, new RemoteRepository.Builder("papermc", "default", "https://papermc.io/repo/repository/maven-public/").build());
+            resolver.addRepository(clazz, new RemoteRepository.Builder("sonatype", "default", "https://oss.sonatype.org/content/groups/public/").build());
+            resolver.addRepository(clazz, new RemoteRepository.Builder("the-cavern-tp", "default", "https://repo.expx.dev/repository/third-party/").build());
 
-        resolver.addDependency(clazz, new Dependency(new DefaultArtifact("dev.dejvokep:boosted-yaml:1.3.6"), "compile"));
+            resolver.addDependency(clazz, new Dependency(new DefaultArtifact("dev.dejvokep:boosted-yaml:1.3.6"), "compile"));
 
-        resolver.addDependency(clazz, new Dependency(new DefaultArtifact("redis.clients:jedis:5.2.0"), "compile"));
-        resolver.addDependency(clazz, new Dependency(new DefaultArtifact("com.rabbitmq:amqp-client:5.21.0"), "compile"));
-        resolver.addDependency(clazz, new Dependency(new DefaultArtifact("org.mongodb:mongodb-driver-sync:5.2.0"), "compile"));
-        resolver.addDependency(clazz, new Dependency(new DefaultArtifact("org.mongodb:mongodb-driver-core:5.2.0"), "compile"));
-        resolver.addDependency(clazz, new Dependency(new DefaultArtifact("org.mongodb:bson:5.2.0"), "compile"));
+            resolver.addDependency(clazz, new Dependency(new DefaultArtifact("redis.clients:jedis:5.2.0"), "compile"));
+            resolver.addDependency(clazz, new Dependency(new DefaultArtifact("com.rabbitmq:amqp-client:5.21.0"), "compile"));
+            resolver.addDependency(clazz, new Dependency(new DefaultArtifact("org.mongodb:mongodb-driver-sync:5.2.0"), "compile"));
+            resolver.addDependency(clazz, new Dependency(new DefaultArtifact("org.mongodb:mongodb-driver-core:5.2.0"), "compile"));
+            resolver.addDependency(clazz, new Dependency(new DefaultArtifact("org.mongodb:bson:5.2.0"), "compile"));
 
-        resolver.addDependency(clazz, new Dependency(new DefaultArtifact("io.socket:socket.io-client:1.0.3-SNAPSHOT-PATCH3"), "compile"));
-        resolver.addDependency(clazz, new Dependency(new DefaultArtifact("io.socket:engine.io-client:1.0.3-SNAPSHOT-PATCH1"), "compile"));
+            resolver.addDependency(clazz, new Dependency(new DefaultArtifact("io.socket:socket.io-client:1.0.3-SNAPSHOT-PATCH3"), "compile"));
+            resolver.addDependency(clazz, new Dependency(new DefaultArtifact("io.socket:engine.io-client:1.0.3-SNAPSHOT-PATCH1"), "compile"));
 
-        resolver.addDependency(clazz, new Dependency(new DefaultArtifact("com.squareup.okhttp3:okhttp:4.12.0"), "compile"));
-        resolver.addDependency(clazz, new Dependency(new DefaultArtifact("com.squareup.okio:okio:3.9.1"), "compile"));
-        resolver.addDependency(clazz, new Dependency(new DefaultArtifact("com.squareup.okio:okio-jvm:3.9.1"), "compile"));
-        resolver.addDependency(clazz, new Dependency(new DefaultArtifact("org.jetbrains.kotlin:kotlin-stdlib:2.0.21"), "compile"));
+            resolver.addDependency(clazz, new Dependency(new DefaultArtifact("com.squareup.okhttp3:okhttp:4.12.0"), "compile"));
+            resolver.addDependency(clazz, new Dependency(new DefaultArtifact("com.squareup.okio:okio:3.9.1"), "compile"));
+            resolver.addDependency(clazz, new Dependency(new DefaultArtifact("com.squareup.okio:okio-jvm:3.9.1"), "compile"));
+            resolver.addDependency(clazz, new Dependency(new DefaultArtifact("org.jetbrains.kotlin:kotlin-stdlib:2.0.21"), "compile"));
 
-        resolver.addDependency(clazz, new Dependency(new DefaultArtifact("com.google.code.gson:gson:2.11.0"), "compile"));
-        resolver.addDependency(clazz, new Dependency(new DefaultArtifact("com.github.oshi:oshi-core:6.6.5"), "compile"));
-        resolver.addDependency(clazz, new Dependency(new DefaultArtifact("org.eclipse.collections:eclipse-collections:12.0.0.M3"), "compile"));
-        resolver.addDependency(clazz, new Dependency(new DefaultArtifact("org.eclipse.collections:eclipse-collections-api:12.0.0.M3"), "compile"));
-        resolver.addDependency(clazz, new Dependency(new DefaultArtifact("com.google.auto.service:auto-service:1.1.1"), "compile"));
+            resolver.addDependency(clazz, new Dependency(new DefaultArtifact("com.google.code.gson:gson:2.11.0"), "compile"));
+            resolver.addDependency(clazz, new Dependency(new DefaultArtifact("com.github.oshi:oshi-core:6.6.5"), "compile"));
+            resolver.addDependency(clazz, new Dependency(new DefaultArtifact("org.eclipse.collections:eclipse-collections:12.0.0.M3"), "compile"));
+            resolver.addDependency(clazz, new Dependency(new DefaultArtifact("org.eclipse.collections:eclipse-collections-api:12.0.0.M3"), "compile"));
+            resolver.addDependency(clazz, new Dependency(new DefaultArtifact("com.google.auto.service:auto-service:1.1.1"), "compile"));
 
-        resolver.addDependency(clazz, new Dependency(new DefaultArtifact("commons-io:commons-io:2.16.1"), "compile"));
-        resolver.addDependency(clazz, new Dependency(new DefaultArtifact("org.projectlombok:lombok:1.18.34"), "compile"));
+            resolver.addDependency(clazz, new Dependency(new DefaultArtifact("commons-io:commons-io:2.16.1"), "compile"));
+            resolver.addDependency(clazz, new Dependency(new DefaultArtifact("org.projectlombok:lombok:1.18.34"), "compile"));
 
-        resolver.addDependency(clazz, new Dependency(new DefaultArtifact("org.json:json:20240303"), "compile"));
+            resolver.addDependency(clazz, new Dependency(new DefaultArtifact("org.json:json:20240303"), "compile"));
 
-        resolver.setLocked(true);
-        ModuleManager.dependencyModules(resolver);
+            resolver.setLocked(true);
+            ModuleManager.dependencyModules(resolver);
 
-        pluginClasspathBuilder.addLibrary(resolver);
+            pluginClasspathBuilder.addLibrary(resolver);
 
-        Logger log = pluginClasspathBuilder.getContext().getLogger();
+            Logger log = pluginClasspathBuilder.getContext().getLogger();
 
-        log.info("-----------------[ Dependency Loader ]-----------------");
-        log.info("");
-        log.info("Loading {} dependencies", resolver.getDependencies().size());
-        for (Map.Entry<Dependency, Class<?>> dependency : resolver.getDependencies().entrySet()) {
-            Artifact artifact = dependency.getKey().getArtifact();
-            log.info("  - ({}) {}:{}:{} {}",
-            dependency.getValue().getName(), artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(),
-                    (StringUtils.isBlank(artifact.getClassifier()) ? "" : ":" + artifact.getClassifier()));
+            log.info("-----------------[ Dependency Loader ]-----------------");
+            log.info("");
+            log.info("Loading {} dependencies", resolver.getDependencies().size());
+            for (Map.Entry<Dependency, Class<?>> dependency : resolver.getDependencies().entrySet()) {
+                Artifact artifact = dependency.getKey().getArtifact();
+                log.info("  - ({}) {}:{}:{} {}",
+                        dependency.getValue().getName(), artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(),
+                        (StringUtils.isBlank(artifact.getClassifier()) ? "" : ":" + artifact.getClassifier()));
+            }
+            log.info("");
+            log.info("Using {} repositories", resolver.getRepositories().size());
+            for (Map.Entry<RemoteRepository, Class<?>> repository : resolver.getRepositories().entrySet()) {
+                log.info("  - ({}) {}: {}", repository.getValue().getName(), repository.getKey().getId(), repository.getKey().getUrl());
+            }
+            log.info("");
+            log.info("------------------------------------------------------");
         }
-        log.info("");
-        log.info("Using {} repositories", resolver.getRepositories().size());
-        for (Map.Entry<RemoteRepository, Class<?>> repository : resolver.getRepositories().entrySet()) {
-            log.info("  - ({}) {}: {}", repository.getValue().getName(), repository.getKey().getId(), repository.getKey().getUrl());
-        }
-        log.info("");
-        log.info("------------------------------------------------------");
     }
 }

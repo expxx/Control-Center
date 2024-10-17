@@ -157,8 +157,8 @@ public class ModuleManager {
      * Check for module updates if
      * the update folder exists
      */
-    public static void updateFolder(@NotNull Path dataDir) {
-        new Thread(() -> {
+    public static Thread updateFolder(@NotNull Path dataDir) {
+        return new Thread(() -> {
             logger.info("Checking for module updates");
             Path updatePath = new File(dataDir.toFile(), "updates").toPath();
             Path modulePath = new File(dataDir.toFile(), "modules").toPath();
@@ -202,7 +202,7 @@ public class ModuleManager {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }).start();
+        });
     }
 
     /**
