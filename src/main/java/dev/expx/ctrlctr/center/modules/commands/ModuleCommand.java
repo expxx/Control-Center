@@ -70,9 +70,9 @@ public class ModuleCommand implements BasicCommand {
     public @NotNull Collection<String> suggest(@NotNull CommandSourceStack commandSourceStack, @NotNull String[] args) {
         List<String> actionList = List.of("disable", "enable", "info", "reload", "update");
         Collection<Module> moduleList = Ctrlctr.getModules().values();
-        if(actionList.stream().filter(action -> action.equals(args[0])).toList().isEmpty())
+        if(args.length == 0)
             return actionList;
-        else if(moduleList.stream().filter(module -> module.getData().name.equals(args[1])).toList().isEmpty())
+        else if(args.length == 1)
             return moduleList.stream().map(module -> module.getData().id).toList();
         return List.of();
     }
