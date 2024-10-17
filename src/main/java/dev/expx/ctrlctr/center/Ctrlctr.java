@@ -271,6 +271,8 @@ public final class Ctrlctr extends JavaPlugin {
             if(!updates.isEmpty()) {
                 getLogger().warning("Updates available:");
                 for(Map.Entry<Module, Version> entry : updates.entrySet()) {
+                    if(entry.getValue().currentVersion().equals(entry.getValue().latestVersion()))
+                        continue;
                     getLogger().warning("  " + entry.getKey().getData().name + " - " + entry.getValue().latestVersion() + " (Current: " + entry.getValue().currentVersion() + ")");
                     if(getMainConfig().getBoolean("auto-update-enabled")) {
                         getLogger().warning("  Updating...");
