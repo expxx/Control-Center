@@ -136,6 +136,10 @@
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
+        <repository>
+            <id>the-cavern</id>
+            <url>https://repo.expx.dev/repository/third-party/</url>
+        </repository>
     </repositories>
 
     <dependencies>
