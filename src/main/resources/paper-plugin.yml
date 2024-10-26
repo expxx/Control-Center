@@ -15,3 +15,7 @@ dependencies:
       join-classpath: true
       load: BEFORE
       required: true
+    Skript:
+        join-classpath: true
+        load: BEFORE
+        required: false

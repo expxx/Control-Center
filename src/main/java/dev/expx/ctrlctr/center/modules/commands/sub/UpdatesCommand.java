@@ -32,11 +32,11 @@ public class UpdatesCommand {
                 s.sendMessage(TextUtil.translate("&aNo updates available."));
                 return;
             }
-            s.sendMessage(TextUtil.translate("&eUpdates available:"));
+            s.sendMessage(TextUtil.translate("&bUpdates available:"));
             for (Map.Entry<Module, Version> entry : updates.entrySet()) {
                 s.sendMessage(TextUtil.translate("&e- " + entry.getKey().getData().name));
-                s.sendMessage(TextUtil.translate("  &eCurrent: &7" + entry.getKey().getData().version));
-                s.sendMessage(TextUtil.translate("  &eLatest: &7" + entry.getValue().latestVersion()));
+                s.sendMessage(TextUtil.translate("  &cCurrent: &7" + entry.getKey().getData().version));
+                s.sendMessage(TextUtil.translate("  &aLatest: &7" + entry.getValue().latestVersion()));
             }
             if (args.length == 2 && args[1].equals("--autoupdate")) {
                 s.sendMessage(TextUtil.translate("&eDownloading updates..."));
