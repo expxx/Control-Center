@@ -5,6 +5,7 @@ import org.bukkit.Location;
 /**
  * Location utilities
  */
+@SuppressWarnings("unused")
 public class LocationUtil {
 
     /**

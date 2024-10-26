@@ -10,6 +10,7 @@ import java.util.HashMap;
  * Utility class for interacting
  * with Discord.
  */
+@SuppressWarnings("unused")
 @ApiStatus.Experimental
 public class DiscordUtil {
 

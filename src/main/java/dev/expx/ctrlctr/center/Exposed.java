@@ -3,6 +3,7 @@ package dev.expx.ctrlctr.center;
 import dev.expx.ctrlctr.center.datastore.Registry;
 import dev.expx.ctrlctr.center.datastore.implementations.EclipseStore;
 
+@SuppressWarnings("unused")
 public class Exposed {
 
     protected static final Registry<String, Expose> exposable = new EclipseStore<>();

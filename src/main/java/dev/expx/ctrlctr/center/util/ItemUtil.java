@@ -9,6 +9,7 @@ import java.util.Map;
 /**
  * Item utility.
  */
+@SuppressWarnings("unused")
 public class ItemUtil {
 
     /**
@@ -36,7 +37,7 @@ public class ItemUtil {
      */
     public static ItemStack deserialize(String serialized) {
         String json = new String(Base64.getDecoder().decode(serialized));
-        Map<String, Object> map = gson.fromJson(json, Map.class);
+        @SuppressWarnings("unchecked") Map<String, Object> map = gson.fromJson(json, Map.class);
         return ItemStack.deserialize(map);
     }
 

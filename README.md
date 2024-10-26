@@ -10,20 +10,22 @@ Control Center is a hobby project of mine, and just to play around with various 
 
 ### Dependencies
 ```xml
-<repositories>
-    <repository>
-        <id>the-cavern</id>
-        <url>https://repo.expx.dev/repository/public-releases/</url>
-    </repository>
-</repositories>
+<project>
+    <repositories>
+        <repository>
+            <id>the-cavern</id>
+            <url>https://repo.expx.dev/repository/public-releases/</url>
+        </repository>
+    </repositories>
 
-<dependencies>
-    <dependency>
-        <groupId>dev.expx.ctrlctr</groupId>
-        <artifactId>ctrlctr</artifactId>
-        <version>1.0.6</version>
-    </dependency>
-</dependencies>
+    <dependencies>
+        <dependency>
+            <groupId>dev.expx.ctrlctr</groupId>
+            <artifactId>ctrlctr</artifactId>
+            <version>1.0.6</version>
+        </dependency>
+    </dependencies>
+</project>
 ```
 Or, if you want to live on the edge, take a look at the snapshot repository found [here](https://repo.expx.dev/repository/public-snapshots/).
 

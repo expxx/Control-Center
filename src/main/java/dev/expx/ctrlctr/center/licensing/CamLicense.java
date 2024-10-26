@@ -18,6 +18,7 @@ import java.util.*;
  * License Validation server
  * created by Cam M, unreleased.
  */
+@SuppressWarnings("unused")
 @ApiStatus.Experimental
 public class CamLicense {
 
@@ -69,7 +70,7 @@ public class CamLicense {
             }
             String local = responseData.get("localKey").getAsString();
             socket();
-            return new CamLicenseResp(valid, local, responseData.get("customer").getAsString(), !Objects.equals(latest, version), latest,"LocalKey Valid");
+            return new CamLicenseResp(true, local, responseData.get("customer").getAsString(), !Objects.equals(latest, version), latest,"LocalKey Valid");
         } catch (Exception e) {
             // not valid
             return new CamLicenseResp(false, null, null, false, null, "Invalid License");

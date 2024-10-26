@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
  * @param latestVersion Latest version
  * @param safeToShow Safe to show
  */
+@SuppressWarnings("unused")
 @ApiStatus.Experimental
 public record CamLicenseResp(
         boolean valid,

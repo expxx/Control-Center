@@ -2,7 +2,6 @@ package dev.expx.ctrlctr.center.commands;
 
 import com.mongodb.client.model.Filters;
 import dev.expx.ctrlctr.center.handlers.PlayerDataHandler;
-import dev.expx.ctrlctr.center.logger.Log;
 import io.papermc.paper.command.brigadier.BasicCommand;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.Bukkit;
@@ -10,13 +9,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.logging.Level;
+import org.slf4j.LoggerFactory;
 
 /**
  * Reloads player data.
- *
- * @usage This is designed to be called from the parent plugin for reloading player data. It may be removed in the future, as it was just a testing command.
  */
 @SuppressWarnings("UnstableApiUsage") @ApiStatus.Internal
 public class ReloadPlayerData implements BasicCommand {
@@ -38,10 +34,10 @@ public class ReloadPlayerData implements BasicCommand {
             sender.sendMessage("Reloading player data... (MULTI-THREADED)");
             new Thread(() -> {
                 for (Player p : Bukkit.getOnlinePlayers()) {
-                    Log.log(Level.WARNING, "Reloading player data for " + p.getName());
+                    LoggerFactory.getLogger(ReloadPlayerData.class).info("Reloading data for {}", p.getName());
                     PlayerDataHandler.getPlayerData().remove(p);
                     PlayerDataHandler.getPlayerData().put(p, PlayerDataHandler.getPdc().find(Filters.eq("playerUuid", p.getUniqueId())).first());
-                    Log.log(Level.WARNING, "Player data reloaded for " + p.getName());
+                    LoggerFactory.getLogger(ReloadPlayerData.class).info("Reloaded data for {}", p.getName());
                 }
             }, "Player Reloader").start();
             sender.sendMessage("Player data reloaded.");

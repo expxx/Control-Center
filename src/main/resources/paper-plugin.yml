@@ -9,7 +9,6 @@ dependencies:
   server:
     Vault:
       join-classpath: true
-      load:
       required: true
     PlaceholderAPI:
       join-classpath: true

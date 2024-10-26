@@ -7,6 +7,7 @@ import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.repository.RemoteRepository;
 
+@SuppressWarnings({"unused", "SpellCheckingInspection"})
 @AutoService(ModuleDependencyLoader.class)
 public class DepMngr extends ModuleDependencyLoader {
     @Override

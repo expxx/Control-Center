@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 /**
  * A simple logger for the plugin.
  */
+@SuppressWarnings("unused")
 public class Log {
 
     /**

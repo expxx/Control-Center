@@ -23,6 +23,7 @@ public class HWID {
      * Reads or creates an HWID
      * @return HWID
      */
+    @SuppressWarnings({"SpellCheckingInspection", "ResultOfMethodCallIgnored"})
     public static UUID read() {
         File readFromPath = new File(Ctrlctr.getInstance().getDataFolder(), "modules/local");
         File readFrom = new File(readFromPath, "id");

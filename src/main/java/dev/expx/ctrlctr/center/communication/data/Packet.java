@@ -10,26 +10,22 @@ import org.jetbrains.annotations.Nullable;
  * Represents a packet that is sent between 2 or more
  * locations to transmit data.
  */
-@Getter
-public final class Packet {
+public record Packet(String head, DataSet... body) {
 
     private static final Gson GSON = new Gson();
 
-    private final String head;
-    private final DataSet[] body;
-
     /**
      * Creates a new packet with the given head and body.
+     *
      * @param head The head of the packet.
      * @param body The body of the packet.
      */
-    public Packet(final String head, final DataSet... body) {
-        this.head = head;
-        this.body = body;
+    public Packet {
     }
 
     /**
      * Creates a new packet from a {@link String} JSON with the given head and body.
+     *
      * @param json The JSON to create the packet from.
      * @return {@link Packet} The packet created from the JSON.
      */
@@ -40,6 +36,7 @@ public final class Packet {
 
     /**
      * Converts the packet to a JSON {@link String}.
+     *
      * @return {@link String} The JSON representation of the packet.
      */
     @NotNull
@@ -49,6 +46,7 @@ public final class Packet {
 
     /**
      * Gets the data with the given key from the packet.
+     *
      * @param key The key of the data to get.
      * @return {@link DataSet} The data with the given key.
      */
@@ -57,7 +55,7 @@ public final class Packet {
     public DataSet getData(@NotNull final String key) {
 
         for (@NotNull final DataSet data : this.body) {
-            if (!data.getKey().equals(key)) {
+            if (!data.key().equals(key)) {
                 continue;
             }
 

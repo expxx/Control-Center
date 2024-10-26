@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
  * @param latestVersion The latest version
  * @param downloadURL The download URL
  */
+@SuppressWarnings("unused")
 public record Version(
         boolean hasUpdate,
         @NotNull String currentVersion,
