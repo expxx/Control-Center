@@ -73,9 +73,9 @@ Modules are loaded via AutoService from Google, then loaded via the `ModuleLoade
 ```toml
 id = "example"
 name = "Example"
-description = "Example Module for Control Center"
+desc = "Example Module for Control Center"
 version = "${project.version}"
-dependencies = []
+deps = []
 ```
 
 ## Dependency Loader
