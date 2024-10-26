@@ -1,48 +1,30 @@
 package dev.expx.ctrlctr.center.modules;
 
-import dev.expx.ctrlctr.center.logger.Log;
+import dev.expx.ctrlctr.center.Ctrlctr;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.logging.Level;
 
 /**
  * ModuleInfo class
+ *
+ * @param id      Module ID
+ * @param name    Module name
+ * @param desc    Module description
+ * @param version Module version
+ * @param deps    Module dependencies
  */
-public class ModuleInfo {
-
-    /**
-     * Module ID
-     */
-    public final String id;
-
-    /**
-     * Module name
-     */
-    public final String name;
-
-    /**
-     * Module description
-     */
-    @SuppressWarnings("unused")
-    public final String desc;
-
-    /**
-     * Module version
-     */
-    public final String version;
-
-    /**
-     * Module dependencies
-     */
-    public final List<String> deps;
+public record ModuleInfo(String id, String name, @SuppressWarnings("unused") String desc, String version,
+                         List<String> deps) {
 
     /**
      * ModuleInfo constructor
-     * @param id Module ID
-     * @param name Module Name
-     * @param desc Module Description
+     *
+     * @param id      Module ID
+     * @param name    Module Name
+     * @param desc    Module Description
      * @param version Module Version
-     * @param deps Module Dependencies
+     * @param deps    Module Dependencies
      */
     public ModuleInfo(
             String id,
@@ -57,10 +39,10 @@ public class ModuleInfo {
         this.version = version;
         this.deps = deps;
 
-        for(String dep : deps) {
-            if(dep.matches("[0-9a-z-]+"))
+        for (String dep : deps) {
+            if (dep.matches("[0-9a-z-]+"))
                 continue;
-            Log.log(Level.WARNING, "[MODULE] Module ({0}) has invalid dependencies: {1}", name, dep);
+            LoggerFactory.getLogger(ModuleInfo.class).error(Ctrlctr.getLang().lang("module-error-invalid-dependencies", id, dep));
         }
     }
 }

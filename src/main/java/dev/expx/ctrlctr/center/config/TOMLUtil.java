@@ -1,13 +1,13 @@
 package dev.expx.ctrlctr.center.config;
 
 import com.moandjiezana.toml.Toml;
-import dev.expx.ctrlctr.center.logger.Log;
+import dev.expx.ctrlctr.center.Ctrlctr;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.util.logging.Level;
 
 /**
  * Utility class for TOML files
@@ -49,7 +49,7 @@ public class TOMLUtil {
             try {
                 Files.copy(is, file.toPath());
             } catch(IOException ex) {
-                Log.log(Level.SEVERE, "An error occurred while creating the file: {0}", ex.getMessage());
+                LoggerFactory.getLogger(TOMLUtil.class).error(Ctrlctr.getLang().lang("config-savefail", ex.getMessage()));
             }
         return parse(file);
     }

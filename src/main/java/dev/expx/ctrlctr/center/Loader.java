@@ -1,5 +1,7 @@
 package dev.expx.ctrlctr.center;
 
+import dev.expx.ctrlctr.center.lang.Lang;
+import dev.expx.ctrlctr.center.lang.LangLoader;
 import dev.expx.ctrlctr.center.modules.ModuleManager;
 import dev.expx.ctrlctr.center.util.DirectMavenResolver;
 import io.papermc.paper.plugin.loader.PluginClasspathBuilder;
@@ -14,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  * Plugin loader.
@@ -32,6 +35,9 @@ public class Loader implements PluginLoader {
      */
     @Override
     public void classloader(@NotNull PluginClasspathBuilder pluginClasspathBuilder) {
+        ResourceBundle bundle = new LangLoader(getClass(), "lang", "en", "US", pluginClasspathBuilder.getContext().getDataDirectory()).getBundle();
+        Lang lang = new Lang(bundle);
+
         try {
             Thread t = ModuleManager.updateFolder(pluginClasspathBuilder.getContext().getDataDirectory());
             t.start();
@@ -77,28 +83,27 @@ public class Loader implements PluginLoader {
             resolver.addDependency(clazz, new Dependency(new DefaultArtifact("org.json:json:20240303"), "compile"));
 
             resolver.setLocked(true);
-            ModuleManager.dependencyModules(resolver);
+            ModuleManager.dependencyModules(resolver, pluginClasspathBuilder.getContext().getDataDirectory());
 
             pluginClasspathBuilder.addLibrary(resolver);
 
             Logger log = pluginClasspathBuilder.getContext().getLogger();
 
-            log.info("-----------------[ Dependency Loader ]-----------------");
+            log.info(lang.lang("dependency-header"));
             log.info("");
-            log.info("Loading {} dependencies", resolver.getDependencies().size());
+            log.info(lang.lang("dependency-dep-amount", resolver.getDependencies().size()));
             for (Map.Entry<Dependency, Class<?>> dependency : resolver.getDependencies().entrySet()) {
                 Artifact artifact = dependency.getKey().getArtifact();
-                log.info("  - ({}) {}:{}:{} {}",
-                        dependency.getValue().getName(), artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(),
-                        (StringUtils.isBlank(artifact.getClassifier()) ? "" : ":" + artifact.getClassifier()));
+                log.info(lang.lang("dependency-dependency", dependency.getValue().getName(), artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(),
+                        (StringUtils.isBlank(artifact.getClassifier()) ? "" : ":" + artifact.getClassifier())));
             }
             log.info("");
-            log.info("Using {} repositories", resolver.getRepositories().size());
+            log.info(lang.lang("dependency-repo-amount", resolver.getRepositories().size()));
             for (Map.Entry<RemoteRepository, Class<?>> repository : resolver.getRepositories().entrySet()) {
-                log.info("  - ({}) {}: {}", repository.getValue().getName(), repository.getKey().getId(), repository.getKey().getUrl());
+                log.info(lang.lang("dependency-repository", repository.getValue().getName(), repository.getKey().getId(), repository.getKey().getUrl()));
             }
             log.info("");
-            log.info("------------------------------------------------------");
+            log.info(lang.lang("dependency-footer"));
         }
     }
 }

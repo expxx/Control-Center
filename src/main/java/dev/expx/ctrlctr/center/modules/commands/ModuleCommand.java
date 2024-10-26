@@ -1,6 +1,7 @@
 package dev.expx.ctrlctr.center.modules.commands;
 
 import dev.expx.ctrlctr.center.Ctrlctr;
+import dev.expx.ctrlctr.center.lang.Lang;
 import dev.expx.ctrlctr.center.modules.Module;
 import dev.expx.ctrlctr.center.modules.commands.sub.*;
 import dev.expx.ctrlctr.center.util.TextUtil;
@@ -21,6 +22,8 @@ import java.util.List;
 @SuppressWarnings("UnstableApiUsage") @ApiStatus.Internal
 public class ModuleCommand implements BasicCommand {
 
+    private final Lang lang = Ctrlctr.getLang();
+
     /**
      * Utility class, do not instantiate.
      */
@@ -40,22 +43,18 @@ public class ModuleCommand implements BasicCommand {
             for(Module module : modules) {
                 if(module.isActive())
                     list = list.append(
-                            TextUtil.translate("&a" + module.getData().name + " &f, ")
-                                    .clickEvent(ClickEvent.runCommand("/module info " + module.getData().name))
+                            TextUtil.translate("&a" + module.getData().name() + " &f, ")
+                                    .clickEvent(ClickEvent.runCommand("/module info " + module.getData().name()))
                     );
                 else
                     list = list.append(
-                            TextUtil.translate("&c" + module.getData().name + "&f, ")
-                                    .clickEvent(ClickEvent.runCommand("/module info " + module.getData().name))
+                            TextUtil.translate("&c" + module.getData().name() + "&f, ")
+                                    .clickEvent(ClickEvent.runCommand("/module info " + module.getData().name()))
                     );
             }
             stack.getSender().sendMessage(list);
         } else if(args.length != 2) {
-            sender.sendMessage(TextUtil.translate("&cUsage: /module <action> <module>"));
-        } else if(args[0].equals("disable")) {
-            new DisableCommand(stack, args);
-        } else if(args[0].equals("enable")) {
-            new EnableCommand(stack, args);
+            sender.sendMessage(lang.langComponent("command-main-usage"));
         } else if(args[0].equals("info")) {
             new InfoCommand(stack, args);
         } else if(args[0].equals("reload")) {
@@ -68,12 +67,12 @@ public class ModuleCommand implements BasicCommand {
 
     @Override @SuppressWarnings("UnstableApiUsage")
     public @NotNull Collection<String> suggest(@NotNull CommandSourceStack commandSourceStack, @NotNull String[] args) {
-        List<String> actionList = List.of("disable", "enable", "info", "reload", "update");
+        List<String> actionList = List.of("info", "reload", "update");
         Collection<Module> moduleList = Ctrlctr.getModules().values();
         if(args.length == 0)
             return actionList;
         else if(args.length == 1)
-            return moduleList.stream().map(module -> module.getData().id).toList();
+            return moduleList.stream().map(module -> module.getData().id()).toList();
         return List.of();
     }
 }

@@ -5,15 +5,14 @@ import dev.expx.ctrlctr.center.communication.data.DataSet;
 import dev.expx.ctrlctr.center.communication.data.Packet;
 import dev.expx.ctrlctr.center.datastore.Registry;
 import dev.expx.ctrlctr.center.datastore.implementations.EclipseStore;
-import dev.expx.ctrlctr.center.logger.Log;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
 
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.logging.Level;
 
 /**
  * Redis is a program that allows for easy
@@ -66,10 +65,10 @@ public class Redis {
             this.jedis.connect();
 
             new Thread(this::subscribe).start();
-            Log.log(Level.INFO, "Connected to Redis Server");
+            LoggerFactory.getLogger(Redis.class).info(Ctrlctr.getLang().lang("redis-connected"));
             Ctrlctr.setRedisConnected(true);
         } catch(Exception e) {
-            Log.log(Level.SEVERE, "Unable to connect to Redis Server");
+            LoggerFactory.getLogger(Redis.class).info(Ctrlctr.getLang().lang("redis-error"));
             Ctrlctr.setRedisConnected(false);
         }
     }
@@ -103,7 +102,7 @@ public class Redis {
                 this.jedis.psubscribe(pubSub, this.channel);
             }
         } catch(Exception e) {
-            Log.log(Level.SEVERE, "Unable to connect to Redis Server");
+            LoggerFactory.getLogger(Redis.class).info(Ctrlctr.getLang().lang("redis-error"));
             Ctrlctr.setRedisConnected(false);
         }
     }
@@ -131,7 +130,7 @@ public class Redis {
      */
     @ApiStatus.Internal
     public void receive(@NotNull final Packet packet) {
-        final Optional<Consumer<Packet>> handler = this.handler.get(packet.getHead());
+        final Optional<Consumer<Packet>> handler = this.handler.get(packet.head());
         handler.ifPresent(consumer -> consumer.accept(packet));
     }
 

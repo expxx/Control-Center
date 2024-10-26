@@ -23,6 +23,7 @@ import java.util.List;
 /**
  * The base class for all modules.
  */
+@SuppressWarnings({"EmptyMethod", "unused"})
 public abstract class Module {
 
     /**
@@ -103,7 +104,7 @@ public abstract class Module {
     protected final YamlDocument saveConfig(Class<?> clazz, String inputFile, String outputFile) {
         InputStream stream = clazz.getResourceAsStream("/" + inputFile);
         if(stream == null) {
-            getLogger().error("Attempted to load missing file {} from resources for module {}", inputFile, getData().name);
+            getLogger().error(Ctrlctr.getLang().lang("module-saveconfig-missing-file", inputFile, getData().name()));
             return null;
         }
         if(
@@ -113,7 +114,7 @@ public abstract class Module {
             try {
                 Files.createDirectory(modulePublicPath.toPath());
             } catch(IOException ex) {
-                getLogger().error("An error occurred while creating the module public path: {}", ex.getMessage());
+                getLogger().error(Ctrlctr.getLang().lang("module-saveconfig-error", ex.getMessage()));
             }
         }
 
@@ -132,7 +133,7 @@ public abstract class Module {
     protected final Toml saveTomlConfig(Class<?> clazz, String inputFile, String outputFile) {
         InputStream stream = clazz.getResourceAsStream("/" + inputFile);
         if(stream == null) {
-            getLogger().error("Attempted to load missing file {} from resources for module {}", inputFile, getData().name);
+            getLogger().error(Ctrlctr.getLang().lang("module-saveconfig-missing-file", inputFile, getData().name()));
             return null;
         }
         if(
@@ -142,7 +143,7 @@ public abstract class Module {
             try {
                 Files.createDirectory(modulePublicPath.toPath());
             } catch(IOException ex) {
-                getLogger().error("An error occurred while creating the module public path: {}", ex.getMessage());
+                getLogger().error(Ctrlctr.getLang().lang("module-saveconfig-error", ex.getMessage()));
             }
         }
 

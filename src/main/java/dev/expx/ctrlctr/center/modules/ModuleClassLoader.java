@@ -1,6 +1,7 @@
 package dev.expx.ctrlctr.center.modules;
 
 import com.moandjiezana.toml.Toml;
+import dev.expx.ctrlctr.center.Ctrlctr;
 import dev.expx.ctrlctr.center.util.DirectMavenResolver;
 import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.LoggerFactory;
@@ -81,7 +82,7 @@ public class ModuleClassLoader extends URLClassLoader {
                         SHARED_PACKAGES.stream().anyMatch(name::startsWith) ||
                                 DirectMavenResolver.SHARED_PACKAGES.stream().anyMatch(name::startsWith));
                 if (new File(dataDir, "enableDebug").exists())
-                    LoggerFactory.getLogger(ModuleClassLoader.class).info("Loading class {} (shared: {})", name, isShared);
+                    LoggerFactory.getLogger(ModuleClassLoader.class).info(Ctrlctr.getLang().lang("module-debug-class", name, isShared));
                 if (isShared) {
                     loadedClass = parentClassLoader.loadClass(name);
                 } else {
@@ -92,7 +93,7 @@ public class ModuleClassLoader extends URLClassLoader {
                 super.resolveClass(loadedClass);
             return loadedClass;
         } catch(ClassNotFoundException ex) {
-            LoggerFactory.getLogger(ModuleClassLoader.class).error("Failed to load class {}: {}", name, ex.getMessage());
+            LoggerFactory.getLogger(ModuleClassLoader.class).error(Ctrlctr.getLang().lang("module-error-class", name, ex.getMessage()));
 
             return null;
         }
@@ -105,7 +106,7 @@ public class ModuleClassLoader extends URLClassLoader {
     public ModuleInfo getModuleInfo() {
         InputStream is = getResourceAsStream("module.toml");
         if(is == null) {
-            LoggerFactory.getLogger(ModuleClassLoader.class).warn("Module found with no module.toml ({})", (Object) getURLs());
+            LoggerFactory.getLogger(ModuleClassLoader.class).warn(Ctrlctr.getLang().lang("module-missing-toml", (Object) getURLs()));
             return null;
         }
         return new Toml().read(is).to(ModuleInfo.class);

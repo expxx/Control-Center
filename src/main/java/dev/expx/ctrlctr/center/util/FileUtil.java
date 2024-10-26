@@ -1,11 +1,15 @@
 package dev.expx.ctrlctr.center.util;
 
+import dev.expx.ctrlctr.center.Ctrlctr;
+import dev.expx.ctrlctr.center.lang.Lang;
+import dev.expx.ctrlctr.center.lang.LangLoader;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collections;
@@ -32,7 +36,7 @@ public class FileUtil {
      * @return List of all files in the directory
      */
     public static List<File> listInDir(File dir) {
-        try { mkdir(dir); } catch(IOException ex) { logger.error("An error occurred while creating the directory: {}", ex.getMessage()); }
+        try { mkdir(dir); } catch(IOException ex) { logger.error(Ctrlctr.getLang().lang("error-file-create-dir", ex.getMessage())); }
 
         if(dir.listFiles() == null) return Collections.emptyList();
         if(Objects.requireNonNull(dir.listFiles()).length == 0) return Collections.emptyList();
@@ -53,7 +57,7 @@ public class FileUtil {
      */
     @SuppressWarnings("unused")
     public static List<File> listInDir(File file, String extension) {
-        try { mkdir(file); } catch(IOException ex) { logger.error("An error occurred while creating the directory: {}", ex.getMessage()); }
+        try { mkdir(file); } catch(IOException ex) { logger.error(Ctrlctr.getLang().lang("error-file-create-dir", ex.getMessage())); }
 
         if(file.listFiles() == null) return Collections.emptyList();
         return Arrays.stream(
@@ -75,6 +79,23 @@ public class FileUtil {
     private static void mkdir(File path) throws IOException {
         if(path.exists()) return;
         Files.createDirectory(path.toPath());
+    }
+
+    /**
+     * Attempts to save a file to the specified location,
+     * however, if the file already exists, it will not
+     * overwrite it.
+     *
+     * @param stream InputStream to save
+     *               to the file
+     * @param output File to save the InputStream to
+     */
+    public static void trySave(InputStream stream, File output) {
+        if(output.exists()) return;
+        try {
+            Files.copy(stream, output.toPath());
+        } catch(IOException | NullPointerException ignored) {
+        }
     }
 
 }

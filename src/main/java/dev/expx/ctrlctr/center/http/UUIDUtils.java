@@ -1,13 +1,12 @@
 package dev.expx.ctrlctr.center.http;
 
 import com.google.gson.JsonObject;
-import dev.expx.ctrlctr.center.logger.Log;
+import dev.expx.ctrlctr.center.Ctrlctr;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.UUID;
-import java.util.logging.Level;
-
 /**
  * Utility class for UUIDs
  */
@@ -40,7 +39,7 @@ public class UUIDUtils {
             if(obj.get("errorMessage") != null) { return ""; }
             return obj.get("id").getAsString();
         }catch(IOException e) {
-            Log.log(Level.SEVERE, "An error occurred while fetching the UUID: {0}", e.getMessage());
+            LoggerFactory.getLogger(UUIDUtils.class).error(Ctrlctr.getLang().lang("http-uuid-fetch-error", e.getMessage()));
         }
         return "";
     }
@@ -55,7 +54,7 @@ public class UUIDUtils {
     @SuppressWarnings("unused")
     public static UUID fromTrimmed(String input) {
         if (!isUuid(input)) {
-            throw new IllegalArgumentException("Not a UUID");
+            throw new IllegalArgumentException(Ctrlctr.getLang().lang("http-uuid-not-uuid", input));
 
         } else if (input.contains("-")) {
             // Already has hyphens

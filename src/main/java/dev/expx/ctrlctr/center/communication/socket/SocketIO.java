@@ -2,7 +2,6 @@ package dev.expx.ctrlctr.center.communication.socket;
 
 import dev.expx.ctrlctr.center.Ctrlctr;
 import dev.expx.ctrlctr.center.communication.data.ConnSet;
-import dev.expx.ctrlctr.center.logger.Log;
 import dev.expx.ctrlctr.center.logger.errors.StorageConnectionException;
 import io.socket.client.Ack;
 import io.socket.client.IO;
@@ -11,12 +10,13 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.ApiStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
 
 /**
  * SocketIO is a program that allows for
@@ -28,6 +28,8 @@ import java.util.logging.Level;
 public class SocketIO {
 
     private SocketIO() {}
+
+    final static Logger l = LoggerFactory.getLogger(SocketIO.class);
 
     @Getter
     @Setter
@@ -45,16 +47,16 @@ public class SocketIO {
     public static Socket connect(ConnSet connSet, boolean secure) {
         URI uri;
         if (secure)
-            uri = URI.create("https://" + connSet.getIp() + ":" + connSet.getPort());
+            uri = URI.create("https://" + connSet.ip() + ":" + connSet.port());
         else
-            uri = URI.create("http://" + connSet.getIp() + ":" + connSet.getPort());
+            uri = URI.create("http://" + connSet.ip() + ":" + connSet.port());
 
         try {
             io = IO.socket(uri);
             Bukkit.getScheduler().runTaskTimerAsynchronously(Ctrlctr.getInstance(), () -> {
                 if (!pendingRegistration.isEmpty() && (!io.connected())) {
                     for (SocketListener listener : pendingRegistration) {
-                        Log.log(Level.INFO, "Starting IO listener {0}", listener.getName());
+                        l.info(Ctrlctr.getLang().lang("socket-start", listener.getName()));
                         io.on(listener.getChannel(), obj -> {
                             if (Arrays.stream(obj).toList().getLast() instanceof Ack ack) {
                                 listener.listen(obj, ack);
@@ -80,10 +82,10 @@ public class SocketIO {
     public static void register(SocketListener listener) {
         if (io != null) {
             if (!io.connected()) {
-                Log.log(Level.INFO, "Saw IO Listener {0} from {1}: Pending Registration", listener.getName(), listener.getClass().getName());
+                l.info(Ctrlctr.getLang().lang("socket-pending", listener.getName(), listener.getClass().getName()));
                 pendingRegistration.add(listener);
             } else {
-                Log.log(Level.INFO, "Saw IO Listener {0} from {1}: Live Registered", listener.getName(), listener.getClass().getName());
+                l.info(Ctrlctr.getLang().lang("socket-live", listener.getName(), listener.getClass().getName()));
                 io.on(listener.getChannel(), obj -> {
                     if (Arrays.stream(obj).toList().getLast() instanceof Ack ack) {
                         listener.listen(obj, ack);
@@ -93,7 +95,7 @@ public class SocketIO {
                 });
             }
         } else {
-            Log.log(Level.INFO, "Saw IO Listener {0} from {1}: No IO", listener.getName(), listener.getClass().getName());
+            l.info(Ctrlctr.getLang().lang("socket-noio", listener.getName(), listener.getClass().getName()));
             pendingRegistration.add(listener);
         }
     }

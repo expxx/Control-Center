@@ -1,8 +1,8 @@
 package dev.expx.ctrlctr.center.modules.commands.sub;
 
 import dev.expx.ctrlctr.center.Ctrlctr;
+import dev.expx.ctrlctr.center.lang.Lang;
 import dev.expx.ctrlctr.center.modules.Module;
-import dev.expx.ctrlctr.center.util.TextUtil;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.ApiStatus;
@@ -20,24 +20,24 @@ public class ReloadCommand {
      */
     public ReloadCommand(CommandSourceStack stack, String[] args) {
         CommandSender sender = stack.getSender();
+        Lang lang = Ctrlctr.getLang();
         if(!sender.hasPermission("controlcenter.module.reload")) {
-            sender.sendMessage(TextUtil.translate("&cYou do not have permission to use this command."));
+            sender.sendMessage(lang.langComponent("command-noperm"));
             return;
         }
         if(args.length != 2) {
-            sender.sendMessage(TextUtil.translate("&cUsage: /module reload <module>"));
+            sender.sendMessage(lang.langComponent("command-reload-usage"));
             return;
         }
         String modName = args[1];
         if(!Ctrlctr.getModules().containsKey(modName)) {
-            sender.sendMessage(TextUtil.translate("&cThat module is not loaded or does not exist."));
+            sender.sendMessage(lang.langComponent("command-module-not-found"));
             return;
         }
 
         Module module = Ctrlctr.getModules().get(modName);
-        sender.sendMessage(TextUtil.translate("&eReloading the module: " + module.getData().name));
         module.reload(sender);
-        sender.sendMessage(TextUtil.translate("&aModule reloaded successfully."));
+        sender.sendMessage(lang.langComponent("command-reload-reloaded"));
     }
 
 }

@@ -10,7 +10,7 @@ import dev.expx.ctrlctr.center.communication.data.AuthSet;
 import dev.expx.ctrlctr.center.communication.data.ConnSet;
 import dev.expx.ctrlctr.center.datastore.Registry;
 import dev.expx.ctrlctr.center.datastore.implementations.EclipseStore;
-import dev.expx.ctrlctr.center.logger.Log;
+import dev.expx.ctrlctr.center.lang.Lang;
 import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.LoggerFactory;
 
@@ -21,13 +21,15 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
-import java.util.logging.Level;
 
 /**
  * RabbitMQ is a message broker that allows you to
  * send messages between different services.
  */
+@SuppressWarnings("unused")
 public class Rabbit {
+
+    final Lang lang = Ctrlctr.getLang();
 
     /**
      * Handlers for RabbitMQ messages. These
@@ -59,16 +61,16 @@ public class Rabbit {
                 }
             }
             if (exists) {
-                throw new AlreadyBoundException("The thread is already initialized.");
+                throw new AlreadyBoundException(lang.lang("rabbit-alreadyinit"));
             } else {
                 registeredQueue = queue;
                 new Thread(() -> {
                     try {
                         ConnectionFactory factory = new ConnectionFactory();
-                        factory.setHost(connSet.getIp());
-                        factory.setPort(connSet.getPort());
-                        factory.setUsername(authSet.getUser());
-                        factory.setPassword(authSet.getPass());
+                        factory.setHost(connSet.ip());
+                        factory.setPort(connSet.port());
+                        factory.setUsername(authSet.user());
+                        factory.setPassword(authSet.pass());
                         try {
                             connection = factory.newConnection();
                             channel = connection.createChannel();
@@ -76,9 +78,9 @@ public class Rabbit {
                             for (String additional : queues)
                                 channel.queueDeclare(additional, false, false, false, null);
                             if (queues.length == 0)
-                                LoggerFactory.getLogger(Rabbit.class).info("Listening in on {}", queue);
+                                LoggerFactory.getLogger(Rabbit.class).info(lang.lang("rabbit-listening-one", queue));
                             else
-                                LoggerFactory.getLogger(Rabbit.class).info("Listening in on {} and {}", queue, Arrays.toString(queues));
+                                LoggerFactory.getLogger(Rabbit.class).info(lang.lang("rabbit-listening-multi", queues, Arrays.toString(queues)));
 
                             DeliverCallback callback = (tag, deliver) -> {
                                 String msg = new String(deliver.getBody(), StandardCharsets.UTF_8);
@@ -87,19 +89,19 @@ public class Rabbit {
                             channel.basicConsume(queue, true, callback, tag -> {
                             });
                         } catch (Exception e) {
-                            Log.log(Level.SEVERE, "Unable to connect to RabbitMQ Server");
+                            LoggerFactory.getLogger(Rabbit.class).error(lang.lang("rabbit-error"));
                             Ctrlctr.setRabbitConnected(false);
                         }
                         Ctrlctr.setRabbitConnected(true);
-                        Log.log(Level.INFO, "Connected to RabbitMQ Server");
+                        LoggerFactory.getLogger(Rabbit.class).info(lang.lang("rabbit-connected"));
                     } catch (Exception e) {
-                        Log.log(Level.SEVERE, "Unable to connect to RabbitMQ Server");
+                        LoggerFactory.getLogger(Rabbit.class).error(lang.lang("rabbit-error"));
                         Ctrlctr.setRabbitConnected(false);
                     }
                 }, "RabbitMQ [" + queue + " " + Arrays.toString(queues)).start();
             }
         } catch(Exception e) {
-            Log.log(Level.SEVERE, "Unable to connect to RabbitMQ Server");
+            LoggerFactory.getLogger(Rabbit.class).error(lang.lang("rabbit-error"));
             Ctrlctr.setRabbitConnected(false);
         }
     }
@@ -140,7 +142,7 @@ public class Rabbit {
             channel.queueDeclare(registeredQueue, false, false, false, null);
             channel.basicPublish("", registeredQueue, null, packet.toJSON().getBytes());
         } catch(IOException ex) {
-            Log.log(Level.WARNING, "Unable to send RabbitMQ message to {0}: {1}", registeredQueue, ex.getMessage());
+            LoggerFactory.getLogger(Rabbit.class).error(lang.lang("rabbit-cant-send", registeredQueue, ex.getMessage()));
         }
     }
 
@@ -152,7 +154,7 @@ public class Rabbit {
         try {
             channel.queueDelete(queue);
         } catch(IOException ex) {
-            Log.log(Level.WARNING, "Unable to delete RabbitMQ Channel {0}: {1}", queue, ex.getMessage());
+            LoggerFactory.getLogger(Rabbit.class).error(lang.lang("rabbit-cant-delete", queue, ex.getMessage()));
         }
     }
 
@@ -164,7 +166,7 @@ public class Rabbit {
             channel.close();
             connection.close();
         } catch(IOException | TimeoutException ex) {
-            Log.log(Level.WARNING, "Unable to close RabbitMQ connection: {0}", ex.getMessage());
+            LoggerFactory.getLogger(Rabbit.class).error(lang.lang("rabbit-cant-close", ex.getMessage()));
         }
     }
 

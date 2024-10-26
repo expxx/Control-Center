@@ -1,5 +1,6 @@
 package dev.expx.ctrlctr.center.util;
 
+import dev.expx.ctrlctr.center.Ctrlctr;
 import io.papermc.paper.plugin.loader.library.ClassPathLibrary;
 import io.papermc.paper.plugin.loader.library.LibraryLoadingException;
 import io.papermc.paper.plugin.loader.library.LibraryStore;
@@ -36,6 +37,7 @@ import java.util.List;
  *
  * @author not me
  */
+@SuppressWarnings("deprecation")
 public class DirectMavenResolver implements ClassPathLibrary {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("MavenResolver");
@@ -108,7 +110,7 @@ public class DirectMavenResolver implements ClassPathLibrary {
                 }
             }
         } catch (DependencyResolutionException exception) {
-            throw new LibraryLoadingException("Error resolving maven libraries", exception);
+            throw new LibraryLoadingException(Ctrlctr.getLang().lang("dependency-resolution-error", exception.getMessage()));
         }
     }
 

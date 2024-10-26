@@ -2,10 +2,10 @@ package dev.expx.ctrlctr.center.modules;
 
 import com.moandjiezana.toml.Toml;
 import dev.expx.ctrlctr.center.Ctrlctr;
-import dev.expx.ctrlctr.center.logger.Log;
+import dev.expx.ctrlctr.center.lang.Lang;
+import dev.expx.ctrlctr.center.lang.LangLoader;
 import dev.expx.ctrlctr.center.logger.errors.ModuleLoadException;
 import dev.expx.ctrlctr.center.util.DirectMavenResolver;
-import io.socket.client.IO;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -18,17 +18,17 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.logging.Level;
 
 /**
  * Module Manager
  */
 @ApiStatus.Internal
 public class ModuleManager {
+
+    private static final Lang lang = Ctrlctr.getLang();
 
     private ModuleManager() throws UnsupportedOperationException {
         throw new UnsupportedOperationException("Utility Class");
@@ -68,7 +68,7 @@ public class ModuleManager {
             if (!moduleDir.exists() || !moduleDir.isDirectory()) {
                 boolean success = moduleDir.mkdirs();
                 if (!success)
-                    throw new RuntimeException("Failed to create modules directory.");
+                    throw new RuntimeException(Ctrlctr.getLang().lang("module-error-main-dir"));
             }
             if (moduleDir.listFiles() == null) return;
             List<File> jars = Arrays.asList(Objects.requireNonNull(moduleDir.listFiles()));
@@ -111,18 +111,18 @@ public class ModuleManager {
                     mod.setPluginDataDir(dataDir.toFile());
                     Thread.currentThread().setContextClassLoader(currentLoader);
                     if (mod.data != null) {
-                        logger.info("Found module: {}", mod.getData().name);
-                        mod.setModulePublicPath(new File(dataDir.toFile(), "modules/" + mod.getLoader().getModuleInfo().name.toLowerCase()));
-                        Ctrlctr.getModules().put(mod.getData().id, mod);
+                        logger.info(lang.lang("module-load-found", mod.data.id()));
+                        mod.setModulePublicPath(new File(dataDir.toFile(), "modules/" + mod.getLoader().getModuleInfo().name().toLowerCase()));
+                        Ctrlctr.getModules().put(mod.getData().id(), mod);
                     } else {
-                        logger.error("Failed to load module: {}: Missing module.toml", mod.getData().name);
+                        logger.error(lang.lang("module-load-missing-toml", mod.getData().name()));
                     }
                 } catch (Exception e) {
-                    logger.info("Failed to load module: {}: {}", mod.getData().name, e.getMessage());
+                    logger.error(lang.lang("module-load-module-error", e.getMessage()));
                 }
             }
         } catch(Exception e) {
-            logger.error("Failed to load modules: {}", e.getMessage());
+            logger.error(Ctrlctr.getLang().lang("module-load-error"), e.getMessage());
         }
     }
 
@@ -130,7 +130,7 @@ public class ModuleManager {
      * Load all dependencies for all modules
      * @param res Direct Maven Resolver
      */
-    public static void dependencyModules(DirectMavenResolver res) {
+    public static void dependencyModules(DirectMavenResolver res, Path dir) {
         final ClassLoader currentLoader = Thread.currentThread().getContextClassLoader();
         final Class<ModuleDependencyLoader> depClass = ModuleDependencyLoader.class;
         ServiceLoader<ModuleDependencyLoader> serviceLoader;
@@ -141,14 +141,15 @@ public class ModuleManager {
             Thread.currentThread().setContextClassLoader(currentLoader);
         }
         for (ModuleDependencyLoader dep : serviceLoader) {
+            Lang lang = new Lang(new LangLoader(Ctrlctr.class, "lang", "en", "US", dir).getBundle());
             try {
-                logger.info("Loading dependencies for {}", dep.getClass().getName());
+                logger.info(lang.lang("module-dep-loading", dep.getClass().getName()));
                 Thread.currentThread().setContextClassLoader(moduleLoader);
                 dep.loadDependencies(res);
                 Thread.currentThread().setContextClassLoader(currentLoader);
-                logger.info("Loaded dependencies for {}", dep.getClass().getName());
+                logger.info(lang.lang("module-dep-loaded", dep.getClass().getName()));
             } catch (Exception e) {
-                logger.error("Failed to load dependencies: {}", e.getMessage());
+                logger.error(lang.lang("module-dep-error", e.getMessage()));
             }
         }
     }
@@ -157,50 +158,45 @@ public class ModuleManager {
      * Check for module updates if
      * the update folder exists
      */
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     public static Thread updateFolder(@NotNull Path dataDir) {
         return new Thread(() -> {
-            logger.info("Checking for module updates");
+            Lang lang = new Lang(new LangLoader(Ctrlctr.class, "lang", "en", "US", dataDir).getBundle());
+            logger.info(lang.lang("module-upd-check"));
             Path updatePath = new File(dataDir.toFile(), "updates").toPath();
             Path modulePath = new File(dataDir.toFile(), "modules").toPath();
 
             try {
                 if(!updatePath.toFile().exists() || !modulePath.toFile().exists()) {
-                    logger.info("Creating update and module directories");
                     updatePath.toFile().mkdirs();
                     modulePath.toFile().mkdirs();
                 }
-                logger.info("Checking for updates in: {}", updatePath.toFile().getAbsolutePath());
                 if(updatePath.toFile().listFiles() == null) return;
                 List<File> jars = Arrays.asList(Objects.requireNonNull(updatePath.toFile().listFiles()));
                 jars.forEach(e -> {
-                    logger.info("Checking update: {}", e.getName());
                     try {
                         String updateId = getModuleId(e.toPath());
-                        logger.info("Update ID: {}", updateId);
                         if(updateId != null) {
                             if(modulePath.toFile().listFiles() == null) return;
-                            logger.info("Module path not empty");
-                            List<File> moduleJars = Arrays.asList(Objects.requireNonNull(modulePath.toFile().listFiles()));
+                            File[] moduleJars = Objects.requireNonNull(modulePath.toFile().listFiles());
                             for(File moduleJar : moduleJars) {
                                 if(moduleJar.isDirectory()) continue;
-                                logger.info("Checking module: {}", moduleJar.getName());
                                 String moduleId = getModuleId(moduleJar.toPath());
                                 if(moduleId != null && moduleId.equals(updateId)) {
                                     Files.delete(moduleJar.toPath());
                                     Files.move(e.toPath(), moduleJar.toPath());
-                                    logger.info("Updated module: {}", updateId);
+                                    logger.info(lang.lang("module-upd-update", updateId));
                                     break;
                                 }
                             }
                         }
-                        logger.info("Failed to update module: {}", e.getName());
+                        logger.info(lang.lang("module-upd-error", e.getName()));
                     } catch (IOException ex) {
-                        ex.printStackTrace();
                         throw new ModuleLoadException(ex.getMessage());
                     }
                 });
             } catch (Exception e) {
-                e.printStackTrace();
+                throw new ModuleLoadException(e.getMessage());
             }
         });
     }
@@ -209,20 +205,19 @@ public class ModuleManager {
      * Install all modules
      */
     public static void installModules() {
-        Log.log(Level.INFO, "Loading {0} modules", Ctrlctr.getModules().size());
+        logger.info(lang.lang("module-install-loading", Ctrlctr.getModules().size()));
         for(Module module : Ctrlctr.getModules().values()) {
             ModuleInfo info = module.getData();
             module.setPlugin(Ctrlctr.getInstance());
             try {
-                logger.info("Installing Module: {}", info.name);
-                if (info.deps != null && !info.deps.isEmpty()) {
-                    for (String id : info.deps) {
+                logger.info(lang.lang("module-install-installing", module.getData().name()));
+                if (info.deps() != null && !info.deps().isEmpty()) {
+                    for (String id : info.deps()) {
                         if (!validateDependency(id, module)) continue;
                         Module depend = Ctrlctr.getModules().get(id);
                         depend.create();
                         if (depend.getError() != null) {
-                            logger.error("Module {} failed to install dependency {}.", info.name, depend.getData().name);
-                            logger.error("Error: {}", depend.getError());
+                            logger.error(lang.lang("module-install-failed-dep", info.name(), depend.getData().name(), depend.getError()));
                             module.destroy();
                             break;
                         }
@@ -230,20 +225,19 @@ public class ModuleManager {
                     }
                 }
             } catch(Exception e) {
-                logger.error("Failed to install module: {}", e.getMessage());
+                logger.error(lang.lang("module-install-failed", e.getMessage()));
             }
             try {
                 module.create();
                 if (module.getError() != null) {
-                    logger.error("Module {} failed to install.", info.name);
-                    logger.error("Error: {}", module.getError());
+                    logger.error(lang.lang("module-install-failed-create", module.getData().name(), module.getError()));
                     module.destroy();
                     continue;
                 }
                 module.setActive(true);
-                logger.info("Module {} installed.", info.name);
+                logger.error(lang.lang("module-install-success", module.getData().name()));
             } catch(Exception e) {
-                logger.error("Failed to install module: {}", e.getMessage());
+                logger.error(lang.lang("module-install-failed", e.getMessage()));
             }
         }
     }
@@ -256,12 +250,12 @@ public class ModuleManager {
      */
     protected static boolean validateDependency(String dependency, Module parent) {
         if(!Ctrlctr.getModules().containsKey(dependency)) {
-            logger.error("Module {} missing dependency {}", parent.getData().name, dependency);
+            logger.error(lang.lang("module-install-missing-dep", parent.getData().name(), dependency));
             return false;
         }
         Module depend = Ctrlctr.getModules().get(dependency);
-        if(depend.isActive() || depend.getData().deps.contains(parent.getData().id)) {
-            logger.error("Module {} depending on dependency {} which is requiring module.", parent.getData().name, dependency);
+        if(depend.isActive() || depend.getData().deps().contains(parent.getData().id())) {
+            logger.error(lang.lang("module-install-circular-dep", parent.getData().name(), depend.getData().name()));
             return false;
         }
         return true;
@@ -275,7 +269,7 @@ public class ModuleManager {
             try {
                 module.destroy();
             } catch(Exception e) {
-                logger.error("Failed to unload module: {}", e.getMessage());
+                logger.error(lang.lang("module-unload-fail", e.getMessage()));
             }
             module.setActive(false);
         }
@@ -286,10 +280,10 @@ public class ModuleManager {
             JarEntry tomlEntry = jarFile.getJarEntry("module.toml");
 
             if (tomlEntry != null) {
-                logger.info("Found module file: {}", tomlEntry.getName());
+                logger.info(lang.lang("module-file-found", tomlEntry.getName()));
                 try (InputStream inputStream = jarFile.getInputStream(tomlEntry)) {
                     Toml toml = new Toml().read(inputStream);
-                    logger.info("Found module toml for name: {}", toml.getString("name"));
+                    logger.info(lang.lang("module-toml-found", toml.getString("name")));
                     return toml.getString("id");
                 }
             }

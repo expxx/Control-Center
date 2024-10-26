@@ -1,13 +1,11 @@
 package dev.expx.ctrlctr.center.http;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import dev.expx.ctrlctr.center.Ctrlctr;
 import dev.expx.ctrlctr.center.logger.errors.ArgumentSyntaxException;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.*;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -16,6 +14,7 @@ import java.util.Scanner;
  * to send HTTP requests to a server and
  * receive a JSON response.
  */
+@SuppressWarnings("unused")
 public class TEXTRequest {
 
     private TEXTRequest() {
@@ -34,7 +33,7 @@ public class TEXTRequest {
      */
     public static String request(String url, String requestMethod, Map<String, String> requestProperties, Boolean includeBody, byte[] body) throws IOException {
         try {
-            LoggerFactory.getLogger(TEXTRequest.class).info("Sending HTTP request to {}", url);
+            LoggerFactory.getLogger(TEXTRequest.class).info(Ctrlctr.getLang().lang("http-text", url));
             URL requestUrl = new URI(url).toURL();
             HttpURLConnection con = (HttpURLConnection) requestUrl.openConnection();
             con.setRequestMethod(requestMethod);

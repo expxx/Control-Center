@@ -1,38 +1,37 @@
 package dev.expx.ctrlctr.center.update;
 
+import dev.expx.ctrlctr.center.Ctrlctr;
+import dev.expx.ctrlctr.center.lang.Lang;
 import dev.expx.ctrlctr.center.logger.errors.ModuleLoadException;
 import dev.expx.ctrlctr.center.logger.errors.ModuleUpdateException;
 import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 public class UpdateDownloader {
 
     private static final Logger logger = org.slf4j.LoggerFactory.getLogger(UpdateDownloader.class);
+    private static final Lang lang = Ctrlctr.getLang();
 
-    public static Path download(String url, Path target, String expectedSha1, String expectedMd5) {
+    public static void download(String url, Path target, String expectedSha1, String expectedMd5) {
         try {
-            logger.info("Downloading from {} to {}", url, target.toAbsolutePath());
-            URL uri = new URL(url);
+            logger.info(lang.lang("updater-downloading", url, target.toAbsolutePath()));
+            URL uri = new URI(url).toURL();
             try (InputStream in = uri.openStream()) {
                 Files.copy(in, target, StandardCopyOption.REPLACE_EXISTING);
                 if (!verifyChecksums(target, expectedSha1, expectedMd5)) {
-                    logger.error("Checksum verification failed for {}", target.toAbsolutePath());
+                    logger.error(lang.lang("updater-checksum-failed", target.toAbsolutePath()));
                     Files.delete(target);
-                    return null;
                 }
-                return target;
-            } catch (IOException e) {
-                return null;
-            }
+            } catch (IOException ignored) {}
         } catch (Exception e) {
             throw new ModuleUpdateException(e.getMessage());
         }
@@ -44,6 +43,7 @@ public class UpdateDownloader {
             try (InputStream fis = Files.newInputStream(filePath);
                  DigestInputStream dis = new DigestInputStream(fis, digest)) {
                 byte[] buffer = new byte[4096];
+                //noinspection StatementWithEmptyBody
                 while (dis.read(buffer) != -1) {
                     // Continue reading and updating the digest
                 }

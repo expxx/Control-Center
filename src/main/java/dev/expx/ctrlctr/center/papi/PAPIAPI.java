@@ -1,13 +1,13 @@
 package dev.expx.ctrlctr.center.papi;
 
-import dev.expx.ctrlctr.center.logger.Log;
+import dev.expx.ctrlctr.center.Ctrlctr;
 import org.bukkit.entity.Player;
-
-import java.util.logging.Level;
+import org.slf4j.LoggerFactory;
 
 /**
  * PlaceholderAPI API handler
  */
+@SuppressWarnings("unused")
 public class PAPIAPI {
 
     /**
@@ -20,8 +20,9 @@ public class PAPIAPI {
      * @param id Placeholder ID
      * @param handler Placeholder handler
      */
+    @SuppressWarnings("unused")
     public static void register(String id, PAPIExpansion.PlaceholderHandler<Player, String> handler) {
-        Log.log(Level.INFO, "Saw Placeholder register request {0}: Live Registered", id);
+        LoggerFactory.getLogger(PAPIAPI.class).info(Ctrlctr.getLang().lang("placeholder-register", id));
         PAPIExpansion.handlers.register(id, handler);
     }
 

@@ -9,15 +9,15 @@ import com.mongodb.client.MongoDatabase;
 import dev.expx.ctrlctr.center.Ctrlctr;
 import dev.expx.ctrlctr.center.communication.data.AuthSet;
 import dev.expx.ctrlctr.center.communication.data.ConnSet;
-import dev.expx.ctrlctr.center.logger.Log;
+import dev.expx.ctrlctr.center.lang.Lang;
 import dev.expx.ctrlctr.center.storage.schemas.PlayerData;
 import lombok.Getter;
 import org.bson.UuidRepresentation;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 import org.jetbrains.annotations.ApiStatus;
-
-import java.util.logging.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
@@ -27,6 +27,8 @@ import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
  */
 @Getter
 public class Mongo {
+
+    private final Lang lang = Ctrlctr.getLang();
 
     /**
      * Instigate a MongoDB Connection
@@ -66,6 +68,7 @@ public class Mongo {
     @ApiStatus.Internal
     public Mongo connectMongo(ConnSet connSet, AuthSet authSet) {
         try {
+            Logger l = LoggerFactory.getLogger(Mongo.class);
             PojoCodecProvider codecProvider = PojoCodecProvider.builder()
                     .automatic(true)
                     .build();
@@ -76,22 +79,22 @@ public class Mongo {
             MongoClientSettings settings = MongoClientSettings.builder()
                     .uuidRepresentation(UuidRepresentation.STANDARD)
                     .applyConnectionString(new ConnectionString(
-                            "mongodb://" + authSet.getUser() + ":" + authSet.getPass() + "@" + connSet.getIp() + ":" +
-                                    connSet.getPort() + "/" + Ctrlctr.getInstance().getStorageConfig().getString("mongo.db") + "?authSource=admin"
+                            "mongodb://" + authSet.user() + ":" + authSet.pass() + "@" + connSet.ip() + ":" +
+                                    connSet.port() + "/" + Ctrlctr.getInstance().getStorageConfig().getString("mongo.db") + "?authSource=admin"
                     ))
                     .codecRegistry(pojoCodecRegistry)
                     .build();
-            Log.log(Level.INFO, "Connecting to MongoDB Server...");
+            l.info(lang.lang("init-mongo-connecting"));
             client = MongoClients.create(settings);
-            Log.log(Level.INFO, "Connected to MongoDB Server");
+            l.info(lang.lang("init-mongo-connected"));
             database = client.getDatabase(Ctrlctr.getInstance().getStorageConfig().getString("mongo.db")).withCodecRegistry(pojoCodecRegistry);
 
-            Log.log(Level.INFO, "Loading Collections...");
+            l.info(lang.lang("init-mongo-loading-collections"));
             playerDataMongoCollection = database.getCollection("players", PlayerData.class);
             Ctrlctr.setMongoConnected(true);
             return this;
         } catch(Exception ex) {
-            Log.log(Level.SEVERE, "Unable to connect to MongoDB Server");
+            LoggerFactory.getLogger(Mongo.class).error(lang.lang("init-mongo-error", ex.getMessage()));
             Ctrlctr.setMongoConnected(false);
             return null;
         }
