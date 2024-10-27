@@ -47,15 +47,14 @@ public class Rabbit {
      * RabbitMQ, handlers registered
      * later.
      * @param queue The queue to subscribe to
-     * @param queues Additional queues you can subscribe to. Performant so there's fewer threads running around.
      * @param authSet The authentication settings for RabbitMQ
      * @param connSet The connection settings for RabbitMQ
      */
-    public Rabbit(String queue, ConnSet connSet, AuthSet authSet, String... queues) {
+    public Rabbit(String queue, ConnSet connSet, AuthSet authSet) {
         try {
             boolean exists = false;
             for (Thread t : Thread.getAllStackTraces().keySet()) {
-                if (t.getName().equals("RabbitMQ [" + queue + " " + Arrays.toString(queues))) {
+                if (t.getName().equals("RabbitMQ [" + queue + "]")) {
                     exists = true;
                     break;
                 }
@@ -75,16 +74,11 @@ public class Rabbit {
                             connection = factory.newConnection();
                             channel = connection.createChannel();
                             channel.queueDeclare(queue, false, false, false, null);
-                            for (String additional : queues)
-                                channel.queueDeclare(additional, false, false, false, null);
-                            if (queues.length == 0)
-                                LoggerFactory.getLogger(Rabbit.class).info(lang.lang("rabbit-listening-one", queue));
-                            else
-                                LoggerFactory.getLogger(Rabbit.class).info(lang.lang("rabbit-listening-multi", queues, Arrays.toString(queues)));
+                            LoggerFactory.getLogger(Rabbit.class).info(lang.lang("rabbit-listening-one", queue));
 
                             DeliverCallback callback = (tag, deliver) -> {
                                 String msg = new String(deliver.getBody(), StandardCharsets.UTF_8);
-                                receive(tag, Packet.fromJSON(msg));
+                                receive(queue, Packet.fromJSON(msg));
                             };
                             channel.basicConsume(queue, true, callback, tag -> {
                             });
@@ -98,7 +92,7 @@ public class Rabbit {
                         LoggerFactory.getLogger(Rabbit.class).error(lang.lang("rabbit-error"));
                         Ctrlctr.setRabbitConnected(false);
                     }
-                }, "RabbitMQ [" + queue + " " + Arrays.toString(queues)).start();
+                }, "RabbitMQ [" + queue + "]").start();
             }
         } catch(Exception e) {
             LoggerFactory.getLogger(Rabbit.class).error(lang.lang("rabbit-error"));
