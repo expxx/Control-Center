@@ -110,7 +110,7 @@ public class DirectMavenResolver implements ClassPathLibrary {
                 }
             }
         } catch (DependencyResolutionException exception) {
-            throw new LibraryLoadingException(Ctrlctr.getLang().lang("dependency-resolution-error", exception.getMessage()));
+            throw new LibraryLoadingException(exception.getMessage());
         }
     }
 
