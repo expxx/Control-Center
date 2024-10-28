@@ -36,7 +36,7 @@ public class UpdatesCommand {
             for (Map.Entry<Module, Version> entry : updates.entrySet()) {
                 s.sendMessage(lang.langComponent("command-update-name", entry.getKey().getData().name()));
                 s.sendMessage(lang.langComponent("command-update-current", entry.getKey().getData().version()));
-                s.sendMessage(lang.langComponent("command-update-latest", entry.getValue()));
+                s.sendMessage(lang.langComponent("command-update-latest", entry.getValue().latestVersion()));
             }
             if (args.length == 2 && args[1].equals("--autoupdate")) {
                 s.sendMessage(lang.langComponent("command-update-auto"));

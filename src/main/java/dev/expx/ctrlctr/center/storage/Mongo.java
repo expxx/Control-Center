@@ -68,6 +68,11 @@ public class Mongo {
     @ApiStatus.Internal
     public Mongo connectMongo(ConnSet connSet, AuthSet authSet) {
         try {
+            java.util.logging.Logger.getLogger("org.mongodb.driver").setLevel(java.util.logging.Level.SEVERE);
+            java.util.logging.Logger.getLogger("org.mongodb.driver.client").setLevel(java.util.logging.Level.SEVERE);
+            java.util.logging.Logger.getLogger("org.mongodb.driver.connection").setLevel(java.util.logging.Level.SEVERE);
+
+
             Logger l = LoggerFactory.getLogger(Mongo.class);
             PojoCodecProvider codecProvider = PojoCodecProvider.builder()
                     .automatic(true)
