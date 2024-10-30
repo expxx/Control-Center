@@ -1,6 +1,7 @@
 package dev.expx.ctrlctr.center.update;
 
 import dev.expx.ctrlctr.center.Ctrlctr;
+import dev.expx.ctrlctr.center.Statics;
 import dev.expx.ctrlctr.center.lang.Lang;
 import dev.expx.ctrlctr.center.logger.errors.ModuleLoadException;
 import dev.expx.ctrlctr.center.logger.errors.ModuleUpdateException;
@@ -19,7 +20,7 @@ import java.security.MessageDigest;
 public class UpdateDownloader {
 
     private static final Logger logger = org.slf4j.LoggerFactory.getLogger(UpdateDownloader.class);
-    private static final Lang lang = Ctrlctr.getLang();
+    private static final Lang lang = Statics.lang;
 
     public static void download(String url, Path target, String expectedSha1, String expectedMd5) {
         try {

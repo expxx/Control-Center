@@ -1,6 +1,7 @@
 package dev.expx.ctrlctr.center.communication.socket;
 
 import dev.expx.ctrlctr.center.Ctrlctr;
+import dev.expx.ctrlctr.center.Statics;
 import dev.expx.ctrlctr.center.communication.data.ConnSet;
 import dev.expx.ctrlctr.center.logger.errors.StorageConnectionException;
 import io.socket.client.Ack;
@@ -53,10 +54,8 @@ public class SocketIO {
 
         try {
             io = IO.socket(uri);
-            Bukkit.getScheduler().runTaskTimerAsynchronously(Ctrlctr.getInstance(), () -> {
-                if (!pendingRegistration.isEmpty() && (!io.connected())) {
+            Thread.ofVirtual().name("SocketIO").start(() -> {
                     for (SocketListener listener : pendingRegistration) {
-                        l.info(Ctrlctr.getLang().lang("socket-start", listener.getName()));
                         io.on(listener.getChannel(), obj -> {
                             if (Arrays.stream(obj).toList().getLast() instanceof Ack ack) {
                                 listener.listen(obj, ack);
@@ -64,9 +63,8 @@ public class SocketIO {
                                 listener.listen(obj, null);
                             }
                         });
-                    }
                 }
-            }, 0, 5000);
+            });
             return io;
         } catch (Exception e) {
             throw new StorageConnectionException(e.getMessage());
@@ -82,10 +80,10 @@ public class SocketIO {
     public static void register(SocketListener listener) {
         if (io != null) {
             if (!io.connected()) {
-                l.info(Ctrlctr.getLang().lang("socket-pending", listener.getName(), listener.getClass().getName()));
+                l.info(Statics.lang.lang("socket-pending", listener.getName(), listener.getClass().getName()));
                 pendingRegistration.add(listener);
             } else {
-                l.info(Ctrlctr.getLang().lang("socket-live", listener.getName(), listener.getClass().getName()));
+                l.info(Statics.lang.lang("socket-live", listener.getName(), listener.getClass().getName()));
                 io.on(listener.getChannel(), obj -> {
                     if (Arrays.stream(obj).toList().getLast() instanceof Ack ack) {
                         listener.listen(obj, ack);
@@ -95,7 +93,7 @@ public class SocketIO {
                 });
             }
         } else {
-            l.info(Ctrlctr.getLang().lang("socket-noio", listener.getName(), listener.getClass().getName()));
+            l.info(Statics.lang.lang("socket-noio", listener.getName(), listener.getClass().getName()));
             pendingRegistration.add(listener);
         }
     }

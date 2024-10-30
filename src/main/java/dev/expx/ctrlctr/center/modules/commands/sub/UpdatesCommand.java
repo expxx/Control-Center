@@ -1,6 +1,7 @@
 package dev.expx.ctrlctr.center.modules.commands.sub;
 
 import dev.expx.ctrlctr.center.Ctrlctr;
+import dev.expx.ctrlctr.center.Statics;
 import dev.expx.ctrlctr.center.lang.Lang;
 import dev.expx.ctrlctr.center.modules.Module;
 import dev.expx.ctrlctr.center.update.UpdateHandler;
@@ -17,7 +18,7 @@ import java.util.Map;
 @ApiStatus.Internal @SuppressWarnings("UnstableApiUsage")
 public class UpdatesCommand {
 
-    private final Lang lang = Ctrlctr.getLang();
+    private final Lang lang = Statics.lang;
 
     public UpdatesCommand(CommandSourceStack stack, String[] args) {
         CommandSender s = stack.getSender();
@@ -40,7 +41,7 @@ public class UpdatesCommand {
             }
             if (args.length == 2 && args[1].equals("--autoupdate")) {
                 s.sendMessage(lang.langComponent("command-update-auto"));
-                Ctrlctr.getInstance().loadUpdates(updates);
+                //loadUpdates(updates); //TODO: FIX THIS
                 s.sendMessage(lang.langComponent("command-update-reboot"));
             } else {
                 s.sendMessage(lang.langComponent("command-update-useautoupdate"));

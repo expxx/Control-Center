@@ -3,6 +3,7 @@ package dev.expx.ctrlctr.center.http;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import dev.expx.ctrlctr.center.Ctrlctr;
+import dev.expx.ctrlctr.center.Statics;
 import dev.expx.ctrlctr.center.logger.errors.ArgumentSyntaxException;
 import org.json.XML;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,7 @@ public class XMLRequest {
      */
     public static JsonObject request(String url, String requestMethod, Map<String, String> requestProperties, Boolean includeBody, byte[] body) throws IOException {
         try {
-            LoggerFactory.getLogger(XMLRequest.class).info(Ctrlctr.getLang().lang("http-xml", url));
+            LoggerFactory.getLogger(XMLRequest.class).info(Statics.lang.lang("http-xml", url));
             URL requestUrl = new URI(url).toURL();
             HttpURLConnection con = (HttpURLConnection) requestUrl.openConnection();
             con.setRequestMethod(requestMethod);

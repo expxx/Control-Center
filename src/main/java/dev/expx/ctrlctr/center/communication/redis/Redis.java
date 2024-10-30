@@ -1,6 +1,7 @@
 package dev.expx.ctrlctr.center.communication.redis;
 
 import dev.expx.ctrlctr.center.Ctrlctr;
+import dev.expx.ctrlctr.center.Statics;
 import dev.expx.ctrlctr.center.communication.data.DataSet;
 import dev.expx.ctrlctr.center.communication.data.Packet;
 import dev.expx.ctrlctr.center.datastore.Registry;
@@ -65,11 +66,11 @@ public class Redis {
             this.jedis.connect();
 
             new Thread(this::subscribe).start();
-            LoggerFactory.getLogger(Redis.class).info(Ctrlctr.getLang().lang("redis-connected"));
-            Ctrlctr.setRedisConnected(true);
+            LoggerFactory.getLogger(Redis.class).info(Statics.lang.lang("redis-connected"));
+            Statics.redisConnected = true;
         } catch(Exception e) {
-            LoggerFactory.getLogger(Redis.class).info(Ctrlctr.getLang().lang("redis-error"));
-            Ctrlctr.setRedisConnected(false);
+            LoggerFactory.getLogger(Redis.class).info(Statics.lang.lang("redis-error"));
+            Statics.redisConnected = false;
         }
     }
 
@@ -102,8 +103,8 @@ public class Redis {
                 this.jedis.psubscribe(pubSub, this.channel);
             }
         } catch(Exception e) {
-            LoggerFactory.getLogger(Redis.class).info(Ctrlctr.getLang().lang("redis-error"));
-            Ctrlctr.setRedisConnected(false);
+            LoggerFactory.getLogger(Redis.class).info(Statics.lang.lang("redis-error"));
+            Statics.redisConnected = false;
         }
     }
 

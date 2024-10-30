@@ -5,6 +5,7 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
 import dev.expx.ctrlctr.center.Ctrlctr;
+import dev.expx.ctrlctr.center.Statics;
 import dev.expx.ctrlctr.center.communication.data.Packet;
 import dev.expx.ctrlctr.center.communication.data.AuthSet;
 import dev.expx.ctrlctr.center.communication.data.ConnSet;
@@ -29,7 +30,7 @@ import java.util.function.Consumer;
 @SuppressWarnings("unused")
 public class Rabbit {
 
-    final Lang lang = Ctrlctr.getLang();
+    final Lang lang = Statics.lang;
 
     /**
      * Handlers for RabbitMQ messages. These
@@ -84,19 +85,19 @@ public class Rabbit {
                             });
                         } catch (Exception e) {
                             LoggerFactory.getLogger(Rabbit.class).error(lang.lang("rabbit-error"));
-                            Ctrlctr.setRabbitConnected(false);
+                            Statics.rabbitConnected = false;
                         }
-                        Ctrlctr.setRabbitConnected(true);
+                        Statics.rabbitConnected = true;
                         LoggerFactory.getLogger(Rabbit.class).info(lang.lang("rabbit-connected"));
                     } catch (Exception e) {
                         LoggerFactory.getLogger(Rabbit.class).error(lang.lang("rabbit-error"));
-                        Ctrlctr.setRabbitConnected(false);
+                        Statics.rabbitConnected = false;
                     }
                 }, "RabbitMQ [" + queue + "]").start();
             }
         } catch(Exception e) {
             LoggerFactory.getLogger(Rabbit.class).error(lang.lang("rabbit-error"));
-            Ctrlctr.setRabbitConnected(false);
+            Statics.rabbitConnected = false;
         }
     }
 

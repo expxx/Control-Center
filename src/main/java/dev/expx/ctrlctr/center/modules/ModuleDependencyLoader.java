@@ -1,6 +1,6 @@
 package dev.expx.ctrlctr.center.modules;
 
-import dev.expx.ctrlctr.center.util.DirectMavenResolver;
+import dev.expx.ctrlctr.center.util.dependencies.resolver.DirectMavenResolver;
 
 /**
  * Represents a module dependency loader.

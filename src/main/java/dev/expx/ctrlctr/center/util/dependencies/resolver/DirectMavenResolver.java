@@ -1,11 +1,9 @@
-package dev.expx.ctrlctr.center.util;
+package dev.expx.ctrlctr.center.util.dependencies.resolver;
 
-import dev.expx.ctrlctr.center.Ctrlctr;
-import io.papermc.paper.plugin.loader.library.ClassPathLibrary;
-import io.papermc.paper.plugin.loader.library.LibraryLoadingException;
-import io.papermc.paper.plugin.loader.library.LibraryStore;
+import dev.expx.ctrlctr.center.util.dependencies.resolver.lib.ClassPathLibrary;
+import dev.expx.ctrlctr.center.util.dependencies.resolver.lib.LibraryLoadingException;
+import dev.expx.ctrlctr.center.util.dependencies.resolver.lib.LibraryStore;
 import lombok.Getter;
-import lombok.Setter;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
@@ -35,12 +33,12 @@ import java.util.List;
 /**
  * Direct Maven Resolver
  *
- * @author not me
+ * @author someone on stackoverflow
  */
 @SuppressWarnings("deprecation")
 public class DirectMavenResolver implements ClassPathLibrary {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger("MavenResolver");
+    private static final Logger LOGGER = LoggerFactory.getLogger(DirectMavenResolver.class);
 
     /**
      * A list of packages that should be
@@ -92,7 +90,6 @@ public class DirectMavenResolver implements ClassPathLibrary {
      * @throws LibraryLoadingException If an error occurs
      */
     @Override
-    @SuppressWarnings("UnstableApiUsage")
     public void register(@NotNull LibraryStore store) throws LibraryLoadingException {
         List<RemoteRepository> repos = this.repository.newResolutionRepositories(this.session, this.repositories.keySet().stream().toList());
 
@@ -113,9 +110,6 @@ public class DirectMavenResolver implements ClassPathLibrary {
             throw new LibraryLoadingException(exception.getMessage());
         }
     }
-
-    @Setter
-    boolean isLocked = false;
 
     /**
      * Add a dependency to be loaded

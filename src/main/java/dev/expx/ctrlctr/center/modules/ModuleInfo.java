@@ -1,6 +1,7 @@
 package dev.expx.ctrlctr.center.modules;
 
 import dev.expx.ctrlctr.center.Ctrlctr;
+import dev.expx.ctrlctr.center.Statics;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
@@ -42,7 +43,7 @@ public record ModuleInfo(String id, String name, @SuppressWarnings("unused") Str
         for (String dep : deps) {
             if (dep.matches("[0-9a-z-]+"))
                 continue;
-            LoggerFactory.getLogger(ModuleInfo.class).error(Ctrlctr.getLang().lang("module-error-invalid-dependencies", id, dep));
+            LoggerFactory.getLogger(ModuleInfo.class).error(Statics.lang.lang("module-error-invalid-dependencies", id, dep));
         }
     }
 }

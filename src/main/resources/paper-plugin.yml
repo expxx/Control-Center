@@ -2,8 +2,7 @@ name: Control-Center
 version: '${project.version}'
 main: dev.expx.ctrlctr.center.Ctrlctr
 api-version: '1.21'
-bootstrapper: dev.expx.ctrlctr.center.Bootstrapper
-loader: dev.expx.ctrlctr.center.Loader
+bootstrapper: dev.expx.ctrlctr.center.servertype.papermc.Bootstrapper
 
 dependencies:
   server:

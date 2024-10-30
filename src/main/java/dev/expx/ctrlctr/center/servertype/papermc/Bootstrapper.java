@@ -1,5 +1,6 @@
-package dev.expx.ctrlctr.center;
+package dev.expx.ctrlctr.center.servertype.papermc;
 
+import dev.expx.ctrlctr.center.Ctrlctr;
 import dev.expx.ctrlctr.center.lang.Lang;
 import dev.expx.ctrlctr.center.lang.LangLoader;
 import io.papermc.paper.plugin.bootstrap.BootstrapContext;

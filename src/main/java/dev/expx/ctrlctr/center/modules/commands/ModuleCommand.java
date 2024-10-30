@@ -1,6 +1,7 @@
 package dev.expx.ctrlctr.center.modules.commands;
 
 import dev.expx.ctrlctr.center.Ctrlctr;
+import dev.expx.ctrlctr.center.Statics;
 import dev.expx.ctrlctr.center.lang.Lang;
 import dev.expx.ctrlctr.center.modules.Module;
 import dev.expx.ctrlctr.center.modules.commands.sub.*;
@@ -22,7 +23,7 @@ import java.util.List;
 @SuppressWarnings("UnstableApiUsage") @ApiStatus.Internal
 public class ModuleCommand implements BasicCommand {
 
-    private final Lang lang = Ctrlctr.getLang();
+    private final Lang lang = Statics.lang;
 
     /**
      * Utility class, do not instantiate.
@@ -38,7 +39,7 @@ public class ModuleCommand implements BasicCommand {
     public void execute(@NotNull CommandSourceStack stack, @NotNull String[] args) {
         CommandSender sender = stack.getSender();
         if(args.length == 0) {
-            List<Module> modules = Ctrlctr.getModules().values().stream().toList();
+            List<Module> modules = Statics.modules.values().stream().toList();
             TextComponent list = TextUtil.translate("&7Modules: &f");
             for(Module module : modules) {
                 if(module.isActive())
@@ -68,7 +69,7 @@ public class ModuleCommand implements BasicCommand {
     @Override @SuppressWarnings("UnstableApiUsage")
     public @NotNull Collection<String> suggest(@NotNull CommandSourceStack commandSourceStack, @NotNull String[] args) {
         List<String> actionList = List.of("info", "reload", "update");
-        Collection<Module> moduleList = Ctrlctr.getModules().values();
+        Collection<Module> moduleList = Statics.modules.values();
         if(args.length == 0)
             return actionList;
         else if(args.length == 1)

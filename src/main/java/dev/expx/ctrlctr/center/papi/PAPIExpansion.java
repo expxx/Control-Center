@@ -1,6 +1,7 @@
 package dev.expx.ctrlctr.center.papi;
 
 import dev.expx.ctrlctr.center.Ctrlctr;
+import dev.expx.ctrlctr.center.Statics;
 import dev.expx.ctrlctr.center.datastore.Registry;
 import dev.expx.ctrlctr.center.datastore.implementations.EclipseStore;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
@@ -58,7 +59,7 @@ public class PAPIExpansion extends PlaceholderExpansion {
     @Override
     @SuppressWarnings("UnstableApiUsage")
     public String getVersion() {
-        return Ctrlctr.getInstance().getPluginMeta().getVersion();
+        return Statics.serverInterface.version();
     }
 
     /**

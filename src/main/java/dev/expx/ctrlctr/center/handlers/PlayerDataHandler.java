@@ -4,8 +4,10 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import dev.expx.ctrlctr.center.Ctrlctr;
+import dev.expx.ctrlctr.center.Statics;
 import dev.expx.ctrlctr.center.lang.Lang;
 import dev.expx.ctrlctr.center.storage.schemas.PlayerData;
+import dev.expx.ctrlctr.center.util.ServerType;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -31,11 +33,11 @@ public class PlayerDataHandler implements Listener {
      */
     public PlayerDataHandler() {}
 
-    final Lang lang = Ctrlctr.getLang();
+    final Lang lang = Statics.lang;
     final Logger l = LoggerFactory.getLogger(PlayerDataHandler.class);
 
     @Getter
-    static final MongoCollection<PlayerData> pdc = Ctrlctr.getInstance().getMongo().getPlayerDataMongoCollection();
+    static final MongoCollection<PlayerData> pdc = Statics.mongo.getPlayerDataMongoCollection();
     @Getter
     static final HashMap<Player, PlayerData> playerData = new HashMap<>();
 
@@ -70,12 +72,6 @@ public class PlayerDataHandler implements Listener {
             }
             if(pd.isPulled()) {
                 l.warn(lang.lang("pd-loaded-elsewhere", e.getPlayer().getName()));
-                Bukkit.getScheduler().runTask(Ctrlctr.getInstance(),
-                        () ->
-                                p.kick(lang.langComponent("pd-kick"),
-                                        PlayerKickEvent.Cause.DUPLICATE_LOGIN)
-                );
-                return;
             }
             l.info(lang.lang("pd-loaded", e.getPlayer().getName()));
             pdc.updateOne(Filters.eq("playerUuid", p.getUniqueId()), Updates.set("pulled", true));

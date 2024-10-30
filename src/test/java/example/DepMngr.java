@@ -2,7 +2,7 @@ package example;
 
 import com.google.auto.service.AutoService;
 import dev.expx.ctrlctr.center.modules.ModuleDependencyLoader;
-import dev.expx.ctrlctr.center.util.DirectMavenResolver;
+import dev.expx.ctrlctr.center.util.dependencies.resolver.DirectMavenResolver;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.repository.RemoteRepository;

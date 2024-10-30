@@ -1,6 +1,7 @@
 package dev.expx.ctrlctr.center.modules.commands.sub;
 
 import dev.expx.ctrlctr.center.Ctrlctr;
+import dev.expx.ctrlctr.center.Statics;
 import dev.expx.ctrlctr.center.lang.Lang;
 import dev.expx.ctrlctr.center.modules.Module;
 import dev.expx.ctrlctr.center.modules.ModuleInfo;
@@ -22,7 +23,7 @@ public class InfoCommand {
      */
     public InfoCommand(CommandSourceStack stack, String[] args) {
         CommandSender sender = stack.getSender();
-        Lang lang = Ctrlctr.getLang();
+        Lang lang = Statics.lang;
         if(!sender.hasPermission("controlcenter.module.info")) {
             sender.sendMessage(lang.langComponent("command-noperm"));
             return;
@@ -32,12 +33,12 @@ public class InfoCommand {
             return;
         }
         String modName = args[1];
-        if(!Ctrlctr.getModules().containsKey(modName)) {
+        if(!Statics.modules.containsKey(modName)) {
             sender.sendMessage(lang.langComponent("command-module-not-found"));
             return;
         }
 
-        Module module = Ctrlctr.getModules().get(modName);
+        Module module = Statics.modules.get(modName);
         ModuleInfo info = module.getData();
         sender.sendMessage(lang.langComponent("command-info-name", info.name()));
         sender.sendMessage(lang.langComponent("command-info-active", (module.isActive() ? "&aYES" : "&cNO")));

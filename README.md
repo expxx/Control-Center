@@ -81,14 +81,14 @@ deps = []
 ## Dependency Loader
 In an effort to keep jar sizes down, and to keep the project as modular as possible, I've supplied the PaperMC method of downloading dependencies at runtime. This is done via the `DependencyLoader` class, which downloads the dependencies from the Maven repository, and loads them into the classpath. In order to use this, you'll need to add a new class to your project. You can find an example below.
 
-This one I'm not entirely sure about, and I'm still working on it. It's a bit of a pain to get working, but it's a lot better than having a 50MB jar file. In the future, I may refactor this to be a bit more user-friendly, but for now, it's a bit of a pain, sorry :( 
+This one I'm not entirely sure about, and I'm still working on it. It's a bit of a pain to get working, but it's a lot better than having a 50MB jar file. In the future, I may refactor this to be a bit more user-friendly, but for now, it's a bit of a pain, sorry :(
 
 ```java
 package example;
 
 import com.google.auto.service.AutoService;
 import dev.expx.ctrlctr.center.modules.ModuleDependencyLoader;
-import dev.expx.ctrlctr.center.util.DirectMavenResolver;
+import dev.expx.ctrlctr.center.util.dependencies.resolver.DirectMavenResolver;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.repository.RemoteRepository;

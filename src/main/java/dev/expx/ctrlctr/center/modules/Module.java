@@ -3,8 +3,10 @@ package dev.expx.ctrlctr.center.modules;
 import com.moandjiezana.toml.Toml;
 import dev.dejvokep.boostedyaml.YamlDocument;
 import dev.expx.ctrlctr.center.Ctrlctr;
+import dev.expx.ctrlctr.center.Statics;
 import dev.expx.ctrlctr.center.config.TOMLUtil;
 import dev.expx.ctrlctr.center.config.YMLUtil;
+import dev.expx.ctrlctr.center.util.ServerIF;
 import io.papermc.paper.command.brigadier.BasicCommand;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,10 +29,11 @@ import java.util.List;
 public abstract class Module {
 
     /**
-     * The plugin instance.
+     * An interface representing the
+     * server.
      */
     @Getter @Setter
-    public Ctrlctr plugin;
+    public ServerIF serverInterface;
 
     /**
      * A collection of {@link ModuleInfo} data.
@@ -104,7 +107,7 @@ public abstract class Module {
     protected final YamlDocument saveConfig(Class<?> clazz, String inputFile, String outputFile) {
         InputStream stream = clazz.getResourceAsStream("/" + inputFile);
         if(stream == null) {
-            getLogger().error(Ctrlctr.getLang().lang("module-saveconfig-missing-file", inputFile, getData().name()));
+            getLogger().error(Statics.lang.lang("module-saveconfig-missing-file", inputFile, getData().name()));
             return null;
         }
         if(
@@ -114,7 +117,7 @@ public abstract class Module {
             try {
                 Files.createDirectory(modulePublicPath.toPath());
             } catch(IOException ex) {
-                getLogger().error(Ctrlctr.getLang().lang("module-saveconfig-error", ex.getMessage()));
+                getLogger().error(Statics.lang.lang("module-saveconfig-error", ex.getMessage()));
             }
         }
 
@@ -133,7 +136,7 @@ public abstract class Module {
     protected final Toml saveTomlConfig(Class<?> clazz, String inputFile, String outputFile) {
         InputStream stream = clazz.getResourceAsStream("/" + inputFile);
         if(stream == null) {
-            getLogger().error(Ctrlctr.getLang().lang("module-saveconfig-missing-file", inputFile, getData().name()));
+            getLogger().error(Statics.lang.lang("module-saveconfig-missing-file", inputFile, getData().name()));
             return null;
         }
         if(
@@ -143,7 +146,7 @@ public abstract class Module {
             try {
                 Files.createDirectory(modulePublicPath.toPath());
             } catch(IOException ex) {
-                getLogger().error(Ctrlctr.getLang().lang("module-saveconfig-error", ex.getMessage()));
+                getLogger().error(Statics.lang.lang("module-saveconfig-error", ex.getMessage()));
             }
         }
 
@@ -160,7 +163,7 @@ public abstract class Module {
     @SuppressWarnings("UnstableApiUsage")
     protected final void registerCommand(String name, String desc, BasicCommand executor) {
         ModuleCommand cmd = new ModuleCommand(name, desc, executor);
-        Ctrlctr.getToRegister().add(cmd);
+        Statics.toRegister.add(cmd);
         this.commands.add(cmd);
     }
 

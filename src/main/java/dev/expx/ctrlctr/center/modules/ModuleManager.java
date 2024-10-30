@@ -2,11 +2,11 @@ package dev.expx.ctrlctr.center.modules;
 
 import com.moandjiezana.toml.Toml;
 import dev.expx.ctrlctr.center.Ctrlctr;
+import dev.expx.ctrlctr.center.Statics;
 import dev.expx.ctrlctr.center.lang.Lang;
 import dev.expx.ctrlctr.center.lang.LangLoader;
 import dev.expx.ctrlctr.center.logger.errors.ModuleLoadException;
-import dev.expx.ctrlctr.center.util.DirectMavenResolver;
-import org.bukkit.command.ConsoleCommandSender;
+import dev.expx.ctrlctr.center.util.dependencies.resolver.DirectMavenResolver;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -43,7 +43,7 @@ public class ModuleManager {
      * @param dataDir Data directory for the plugin
      */
     public static void setup(File dataDir) {
-        Ctrlctr.getToRegister().add(new ModuleCommand("module", "Module Management", new dev.expx.ctrlctr.center.modules.commands.ModuleCommand()));
+        Statics.toRegister.add(new ModuleCommand("module", "Module Management", new dev.expx.ctrlctr.center.modules.commands.ModuleCommand()));
         try {
             setupModuleLoader(dataDir.toPath());
             loadModules(dataDir.toPath());
@@ -67,7 +67,7 @@ public class ModuleManager {
             if (!moduleDir.exists() || !moduleDir.isDirectory()) {
                 boolean success = moduleDir.mkdirs();
                 if (!success)
-                    throw new RuntimeException(Ctrlctr.getLang().lang("module-error-main-dir"));
+                    throw new RuntimeException(Statics.lang.lang("module-error-main-dir"));
             }
             if (moduleDir.listFiles() == null) return;
             List<File> jars = Arrays.asList(Objects.requireNonNull(moduleDir.listFiles()));
@@ -91,8 +91,7 @@ public class ModuleManager {
      */
     public static void loadModules(@NotNull Path dataDir) {
         try {
-            final ConsoleCommandSender s = Ctrlctr.getInstance().getServer().getConsoleSender();
-            final Lang lang = Ctrlctr.getLang();
+            final Lang lang = Statics.lang;
             final ClassLoader currentLoader = Thread.currentThread().getContextClassLoader();
             final Class<Module> moduleClass = Module.class;
             ServiceLoader<Module> serviceLoader;
@@ -112,18 +111,18 @@ public class ModuleManager {
                     mod.setPluginDataDir(dataDir.toFile());
                     Thread.currentThread().setContextClassLoader(currentLoader);
                     if (mod.data != null) {
-                        s.sendMessage(lang.langComponent("module-load-found", mod.data.id()));
+                        logger.info(lang.lang("module-load-found", mod.data.id()));
                         mod.setModulePublicPath(new File(dataDir.toFile(), "modules/" + mod.getLoader().getModuleInfo().name().toLowerCase()));
-                        Ctrlctr.getModules().put(mod.getData().id(), mod);
+                        Statics.modules.put(mod.getData().id(), mod);
                     } else {
-                        s.sendMessage(lang.langComponent("module-load-missing-toml", mod.getData().name()));
+                        logger.info(lang.lang("module-load-missing-toml", mod.getData().name()));
                     }
                 } catch (Exception e) {
-                    s.sendMessage(lang.langComponent("module-load-module-error", e.getMessage()));
+                    logger.info(lang.lang("module-load-module-error", e.getMessage()));
                 }
             }
         } catch(Exception e) {
-            logger.error(Ctrlctr.getLang().lang("module-load-error"), e.getMessage());
+            logger.error(Statics.lang.lang("module-load-error"), e.getMessage());
         }
     }
 
@@ -193,7 +192,6 @@ public class ModuleManager {
                     }
                 });
             } catch (Exception e) {
-                e.printStackTrace();
                 throw new ModuleLoadException(e.getMessage());
             }
         });
@@ -203,21 +201,20 @@ public class ModuleManager {
      * Install all modules
      */
     public static void installModules() {
-        final ConsoleCommandSender s = Ctrlctr.getInstance().getServer().getConsoleSender();
-        final Lang lang = Ctrlctr.getLang();
-        s.sendMessage(lang.langComponent("module-install-loading", Ctrlctr.getModules().size()));
-        for(Module module : Ctrlctr.getModules().values()) {
+        final Lang lang = Statics.lang;
+        logger.info(lang.lang("module-install-loading", Statics.modules.size()));
+        for(Module module : Statics.modules.values()) {
             ModuleInfo info = module.getData();
-            module.setPlugin(Ctrlctr.getInstance());
+            module.setServerInterface(Statics.serverInterface);
             try {
-                s.sendMessage(lang.langComponent("module-install-installing", module.getData().name()));
+                logger.info(lang.lang("module-install-installing", module.getData().name()));
                 if (info.deps() != null && !info.deps().isEmpty()) {
                     for (String id : info.deps()) {
                         if (!validateDependency(id, module)) continue;
-                        Module depend = Ctrlctr.getModules().get(id);
+                        Module depend = Statics.modules.get(id);
                         depend.create();
                         if (depend.getError() != null) {
-                            s.sendMessage(lang.langComponent("module-install-failed-dep", info.name(), depend.getData().name(), depend.getError()));
+                            logger.info(lang.lang("module-install-failed-dep", info.name(), depend.getData().name(), depend.getError()));
                             module.destroy();
                             break;
                         }
@@ -225,19 +222,19 @@ public class ModuleManager {
                     }
                 }
             } catch(Exception e) {
-                s.sendMessage(lang.langComponent("module-install-failed", e.getMessage()));
+                logger.info(lang.lang("module-install-failed", e.getMessage()));
             }
             try {
                 module.create();
                 if (module.getError() != null) {
-                    s.sendMessage(lang.langComponent("module-install-failed-create", module.getData().name(), module.getError()));
+                    logger.info(lang.lang("module-install-failed-create", module.getData().name(), module.getError()));
                     module.destroy();
                     continue;
                 }
                 module.setActive(true);
-                s.sendMessage(lang.langComponent("module-install-success", module.getData().name()));
+                logger.info(lang.lang("module-install-success", module.getData().name()));
             } catch(Exception e) {
-                s.sendMessage(lang.langComponent("module-install-failed", e.getMessage()));
+                logger.info(lang.lang("module-install-failed", e.getMessage()));
             }
         }
     }
@@ -249,15 +246,14 @@ public class ModuleManager {
      * @return True if the dependency is valid
      */
     protected static boolean validateDependency(String dependency, Module parent) {
-        final ConsoleCommandSender s = Ctrlctr.getInstance().getServer().getConsoleSender();
-        final Lang lang = Ctrlctr.getLang();
-        if(!Ctrlctr.getModules().containsKey(dependency)) {
-            s.sendMessage(lang.langComponent("module-install-missing-dep", parent.getData().name(), dependency));
+        final Lang lang = Statics.lang;
+        if(!Statics.modules.containsKey(dependency)) {
+            logger.info(lang.lang("module-install-missing-dep", parent.getData().name(), dependency));
             return false;
         }
-        Module depend = Ctrlctr.getModules().get(dependency);
+        Module depend = Statics.modules.get(dependency);
         if(depend.isActive() || depend.getData().deps().contains(parent.getData().id())) {
-            s.sendMessage(lang.langComponent("module-install-circular-dep", parent.getData().name(), depend.getData().name()));
+            logger.info(lang.lang("module-install-circular-dep", parent.getData().name(), depend.getData().name()));
             return false;
         }
         return true;
@@ -267,8 +263,8 @@ public class ModuleManager {
      * Unload all modules
      */
     public static void trashModules() {
-        for(Module module : Ctrlctr.getModules().values()) {
-            final Lang lang = Ctrlctr.getLang();
+        for(Module module : Statics.modules.values()) {
+            final Lang lang = Statics.lang;
             try {
                 module.destroy();
             } catch(Exception e) {

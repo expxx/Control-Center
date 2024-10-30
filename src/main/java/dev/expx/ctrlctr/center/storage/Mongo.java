@@ -7,6 +7,7 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import dev.expx.ctrlctr.center.Ctrlctr;
+import dev.expx.ctrlctr.center.Statics;
 import dev.expx.ctrlctr.center.communication.data.AuthSet;
 import dev.expx.ctrlctr.center.communication.data.ConnSet;
 import dev.expx.ctrlctr.center.lang.Lang;
@@ -28,7 +29,7 @@ import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 @Getter
 public class Mongo {
 
-    private final Lang lang = Ctrlctr.getLang();
+    private final Lang lang = Statics.lang;
 
     /**
      * Instigate a MongoDB Connection
@@ -85,22 +86,22 @@ public class Mongo {
                     .uuidRepresentation(UuidRepresentation.STANDARD)
                     .applyConnectionString(new ConnectionString(
                             "mongodb://" + authSet.user() + ":" + authSet.pass() + "@" + connSet.ip() + ":" +
-                                    connSet.port() + "/" + Ctrlctr.getInstance().getStorageConfig().getString("mongo.db") + "?authSource=admin"
+                                    connSet.port() + "/" + Statics.storageConfig.getString("mongo.db") + "?authSource=admin"
                     ))
                     .codecRegistry(pojoCodecRegistry)
                     .build();
             l.info(lang.lang("init-mongo-connecting"));
             client = MongoClients.create(settings);
             l.info(lang.lang("init-mongo-connected"));
-            database = client.getDatabase(Ctrlctr.getInstance().getStorageConfig().getString("mongo.db")).withCodecRegistry(pojoCodecRegistry);
+            database = client.getDatabase(Statics.storageConfig.getString("mongo.db")).withCodecRegistry(pojoCodecRegistry);
 
             l.info(lang.lang("init-mongo-loading-collections"));
             playerDataMongoCollection = database.getCollection("players", PlayerData.class);
-            Ctrlctr.setMongoConnected(true);
+            Statics.mongoConnected = true;
             return this;
         } catch(Exception ex) {
             LoggerFactory.getLogger(Mongo.class).error(lang.lang("init-mongo-error", ex.getMessage()));
-            Ctrlctr.setMongoConnected(false);
+            Statics.mongoConnected = false;
             return null;
         }
     }

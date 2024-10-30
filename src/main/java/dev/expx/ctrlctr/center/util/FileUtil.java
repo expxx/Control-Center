@@ -1,6 +1,7 @@
 package dev.expx.ctrlctr.center.util;
 
 import dev.expx.ctrlctr.center.Ctrlctr;
+import dev.expx.ctrlctr.center.Statics;
 import dev.expx.ctrlctr.center.lang.Lang;
 import dev.expx.ctrlctr.center.lang.LangLoader;
 import org.apache.commons.io.FilenameUtils;
@@ -36,7 +37,7 @@ public class FileUtil {
      * @return List of all files in the directory
      */
     public static List<File> listInDir(File dir) {
-        try { mkdir(dir); } catch(IOException ex) { logger.error(Ctrlctr.getLang().lang("error-file-create-dir", ex.getMessage())); }
+        try { mkdir(dir); } catch(IOException ex) { logger.error(Statics.lang.lang("error-file-create-dir", ex.getMessage())); }
 
         if(dir.listFiles() == null) return Collections.emptyList();
         if(Objects.requireNonNull(dir.listFiles()).length == 0) return Collections.emptyList();
@@ -57,7 +58,7 @@ public class FileUtil {
      */
     @SuppressWarnings("unused")
     public static List<File> listInDir(File file, String extension) {
-        try { mkdir(file); } catch(IOException ex) { logger.error(Ctrlctr.getLang().lang("error-file-create-dir", ex.getMessage())); }
+        try { mkdir(file); } catch(IOException ex) { logger.error(Statics.lang.lang("error-file-create-dir", ex.getMessage())); }
 
         if(file.listFiles() == null) return Collections.emptyList();
         return Arrays.stream(

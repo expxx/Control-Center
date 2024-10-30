@@ -1,6 +1,7 @@
 package dev.expx.ctrlctr.center.papi;
 
 import dev.expx.ctrlctr.center.Ctrlctr;
+import dev.expx.ctrlctr.center.Statics;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.entity.Player;
 import org.slf4j.LoggerFactory;
@@ -23,7 +24,7 @@ public class PAPIAPI {
      */
     @SuppressWarnings("unused")
     public static void register(String id, PAPIExpansion.PlaceholderHandler<Player, String> handler) {
-        LoggerFactory.getLogger(PAPIAPI.class).info(Ctrlctr.getLang().lang("placeholder-register", id));
+        LoggerFactory.getLogger(PAPIAPI.class).info(Statics.lang.lang("placeholder-register", id));
         PAPIExpansion.handlers.register(id, handler);
     }
 

@@ -2,7 +2,6 @@ package dev.expx.ctrlctr.center;
 
 import com.google.gson.JsonObject;
 import com.mongodb.client.model.Filters;
-import dev.dejvokep.boostedyaml.YamlDocument;
 import dev.expx.ctrlctr.center.commands.InformationCommand;
 import dev.expx.ctrlctr.center.commands.ReloadPlayerData;
 import dev.expx.ctrlctr.center.communication.rabbit.Rabbit;
@@ -18,18 +17,18 @@ import dev.expx.ctrlctr.center.modules.Module;
 import dev.expx.ctrlctr.center.modules.ModuleCommand;
 import dev.expx.ctrlctr.center.modules.ModuleManager;
 import dev.expx.ctrlctr.center.papi.PAPIExpansion;
+import dev.expx.ctrlctr.center.servertype.papermc.Loader;
 import dev.expx.ctrlctr.center.storage.Mongo;
 import dev.expx.ctrlctr.center.storage.schemas.PlayerData;
 import dev.expx.ctrlctr.center.update.UpdateDownloader;
 import dev.expx.ctrlctr.center.update.UpdateHandler;
 import dev.expx.ctrlctr.center.update.Version;
+import dev.expx.ctrlctr.center.util.ServerIF;
+import dev.expx.ctrlctr.center.util.ServerType;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
-import lombok.Getter;
-import lombok.Setter;
 import net.milkbowl.vault.economy.Economy;
-import org.apache.logging.log4j.spi.LoggerContext;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -40,57 +39,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+import static dev.expx.ctrlctr.center.Statics.*;
+
 /**
  * Main class for the Control Center plugin.
  */
 @SuppressWarnings("UnstableApiUsage")
-public final class Ctrlctr extends JavaPlugin {
-
-    @Getter
-    private static final HashMap<String, Module> modules = new HashMap<>();
-
-    @Getter
-    private static Ctrlctr instance;
-    @Getter
-    private static final List<ModuleCommand> toRegister = new ArrayList<>();
-
-    @Getter
-    private YamlDocument storageConfig;
-    @Getter
-    private YamlDocument mainConfig;
-
-    @Getter @Setter
-    private static boolean mongoConnected = false;
-    @Getter @Setter
-    private static boolean rabbitConnected = false;
-    @Getter @Setter
-    private static boolean redisConnected = false;
-
-    @Getter
-    private ConnSet mongoConnSet;
-    @Getter
-    private ConnSet rabbitConnSet;
-    @Getter
-    private ConnSet redisConnSet;
-    @Getter
-    private AuthSet mongoAuthSet;
-    @Getter
-    private AuthSet rabbitAuthSet;
-    @Getter
-    private AuthSet redisAuthSet;
-
-    @Getter
-    private Rabbit globalRabbit;
-    @Getter
-    private Redis globalRedis;
-    @Getter
-    private Mongo mongo;
-
-    @Getter
-    private Economy econ;
-
-    @Getter
-    private static Lang lang;
+public final class Ctrlctr extends JavaPlugin implements ServerIF {
 
 
     /**
@@ -98,10 +53,13 @@ public final class Ctrlctr extends JavaPlugin {
      */
     @Override @ApiStatus.Internal
     public void onEnable() {
+        Statics.serverType = ServerType.PAPERMC;
+        Statics.serverInterface = this;
+
+        new Loader().classloader(getDataFolder().toPath());
+
         ResourceBundle bundle = new LangLoader(getClass(),"lang", "en", "US", getDataFolder().toPath()).getBundle();
         lang = new Lang(bundle);
-
-        instance = this;
 
         if (!setupEco()) {
             getLogger().severe(lang.lang("init-error-economy"));
@@ -126,7 +84,7 @@ public final class Ctrlctr extends JavaPlugin {
                 storageConfig.getString("mongo.user"),
                 storageConfig.getString("mongo.pass")
         );
-        mongo = new Mongo().connectMongo(mongoConnSet, mongoAuthSet);
+        mongo = new Mongo().connectMongo(Statics.mongoConnSet, Statics.mongoAuthSet);
         getLogger().info("");
 
 
@@ -261,7 +219,7 @@ public final class Ctrlctr extends JavaPlugin {
                 for(Map.Entry<Module, Version> entry : updates.entrySet()) {
                     if(entry.getValue().currentVersion().equals(entry.getValue().latestVersion()))
                         continue;
-                    if(getMainConfig().getBoolean("auto-update-enabled")) {
+                    if(mainConfig.getBoolean("auto-update-enabled")) {
                         getLogger().warning(lang.lang("module-updating"));
                         UpdateDownloader.download(
                                 entry.getValue().directDownloadUrl(),
@@ -274,6 +232,12 @@ public final class Ctrlctr extends JavaPlugin {
                 getLogger().info(lang.lang("module-update-downloaded"));
             }
         }).start();
+    }
+
+
+    @Override
+    public JavaPlugin paperInterface() {
+        return this;
     }
 
 }

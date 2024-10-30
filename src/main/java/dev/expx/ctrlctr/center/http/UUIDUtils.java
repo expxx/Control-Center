@@ -2,6 +2,7 @@ package dev.expx.ctrlctr.center.http;
 
 import com.google.gson.JsonObject;
 import dev.expx.ctrlctr.center.Ctrlctr;
+import dev.expx.ctrlctr.center.Statics;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
@@ -39,7 +40,7 @@ public class UUIDUtils {
             if(obj.get("errorMessage") != null) { return ""; }
             return obj.get("id").getAsString();
         }catch(IOException e) {
-            LoggerFactory.getLogger(UUIDUtils.class).error(Ctrlctr.getLang().lang("http-uuid-fetch-error", e.getMessage()));
+            LoggerFactory.getLogger(UUIDUtils.class).error(Statics.lang.lang("http-uuid-fetch-error", e.getMessage()));
         }
         return "";
     }
@@ -54,7 +55,7 @@ public class UUIDUtils {
     @SuppressWarnings("unused")
     public static UUID fromTrimmed(String input) {
         if (!isUuid(input)) {
-            throw new IllegalArgumentException(Ctrlctr.getLang().lang("http-uuid-not-uuid", input));
+            throw new IllegalArgumentException(Statics.lang.lang("http-uuid-not-uuid", input));
 
         } else if (input.contains("-")) {
             // Already has hyphens

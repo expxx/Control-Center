@@ -1,9 +1,14 @@
-package dev.expx.ctrlctr.center;
+package dev.expx.ctrlctr.center.servertype.papermc;
 
+import dev.expx.ctrlctr.center.Ctrlctr;
+import dev.expx.ctrlctr.center.Statics;
 import dev.expx.ctrlctr.center.lang.Lang;
 import dev.expx.ctrlctr.center.lang.LangLoader;
 import dev.expx.ctrlctr.center.modules.ModuleManager;
-import dev.expx.ctrlctr.center.util.DirectMavenResolver;
+import dev.expx.ctrlctr.center.util.dependencies.classpath.URLClassLoaderAccess;
+import dev.expx.ctrlctr.center.util.dependencies.resolver.DirectMavenResolver;
+import dev.expx.ctrlctr.center.util.dependencies.resolver.impl.SimpleLibraryStore;
+import dev.expx.ctrlctr.center.util.dependencies.resolver.lib.URLClassLoaderHelper;
 import io.papermc.paper.plugin.loader.PluginClasspathBuilder;
 import io.papermc.paper.plugin.loader.PluginLoader;
 import org.apache.commons.lang3.StringUtils;
@@ -14,7 +19,11 @@ import org.eclipse.aether.repository.RemoteRepository;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.net.MalformedURLException;
+import java.net.URLClassLoader;
+import java.nio.file.Path;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -22,7 +31,7 @@ import java.util.ResourceBundle;
  * Plugin loader.
  */
 @SuppressWarnings({"UnstableApiUsage", "unused"}) @ApiStatus.Internal
-public class Loader implements PluginLoader {
+public class Loader {
 
     /**
      * Plugin Loader, provided by PaperMC
@@ -31,21 +40,19 @@ public class Loader implements PluginLoader {
 
     /**
      * Loads the plugin.
-     * @param pluginClasspathBuilder Plugin classpath builder
      */
-    @Override
-    public void classloader(@NotNull PluginClasspathBuilder pluginClasspathBuilder) {
-        ResourceBundle bundle = new LangLoader(getClass(), "lang", "en", "US", pluginClasspathBuilder.getContext().getDataDirectory()).getBundle();
+    public void classloader(Path dir) {
+        ResourceBundle bundle = new LangLoader(getClass(), "lang", "en", "US", dir).getBundle();
         Lang lang = new Lang(bundle);
 
         try {
-            Thread t = ModuleManager.updateFolder(pluginClasspathBuilder.getContext().getDataDirectory());
+            Thread t = ModuleManager.updateFolder(dir);
             t.start();
             t.join();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } finally {
-            ModuleManager.setupModuleLoader(pluginClasspathBuilder.getContext().getDataDirectory());
+            ModuleManager.setupModuleLoader(dir);
             DirectMavenResolver resolver = new DirectMavenResolver();
 
             Class<?> clazz = Ctrlctr.class;
@@ -82,12 +89,8 @@ public class Loader implements PluginLoader {
 
             resolver.addDependency(clazz, new Dependency(new DefaultArtifact("org.json:json:20240303"), "compile"));
 
-            resolver.setLocked(true);
-            ModuleManager.dependencyModules(resolver, pluginClasspathBuilder.getContext().getDataDirectory());
-
-            pluginClasspathBuilder.addLibrary(resolver);
-
-            Logger log = pluginClasspathBuilder.getContext().getLogger();
+            ModuleManager.dependencyModules(resolver, dir);
+            Logger log = LoggerFactory.getLogger(Loader.class);
 
             log.info(lang.lang("dependency-header"));
             log.info("");
@@ -104,6 +107,17 @@ public class Loader implements PluginLoader {
             }
             log.info("");
             log.info(lang.lang("dependency-footer"));
+
+            URLClassLoaderAccess access = URLClassLoaderAccess.create((URLClassLoader) Statics.serverInterface.paperInterface().getClass().getClassLoader().getParent());
+            SimpleLibraryStore sls = new SimpleLibraryStore();
+            resolver.register(sls);
+            for(Path path : sls.getPaths()) {
+                try {
+                    access.addURL(path.toUri().toURL());
+                } catch (MalformedURLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
     }
 }

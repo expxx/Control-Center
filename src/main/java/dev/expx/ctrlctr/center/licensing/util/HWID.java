@@ -1,6 +1,7 @@
 package dev.expx.ctrlctr.center.licensing.util;
 
 import dev.expx.ctrlctr.center.Ctrlctr;
+import dev.expx.ctrlctr.center.Statics;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.io.File;
@@ -25,7 +26,7 @@ public class HWID {
      */
     @SuppressWarnings({"SpellCheckingInspection", "ResultOfMethodCallIgnored"})
     public static UUID read() {
-        File readFromPath = new File(Ctrlctr.getInstance().getDataFolder(), "modules/local");
+        File readFromPath = new File(Statics.dataDir, "modules/local");
         File readFrom = new File(readFromPath, "id");
         try {
             if(!readFromPath.exists() || !readFromPath.isDirectory())
