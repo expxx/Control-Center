@@ -1,12 +1,13 @@
 package dev.expx.ctrlctr.center.servertype.velocity;
 
+import dev.expx.ctrlctr.center.Statics;
 import dev.expx.ctrlctr.center.lang.Lang;
 import dev.expx.ctrlctr.center.lang.LangLoader;
 import dev.expx.ctrlctr.center.modules.ModuleManager;
 import dev.expx.ctrlctr.center.util.ServerIF;
+import dev.expx.ctrlctr.center.util.dependencies.classpath.URLClassLoaderAccess;
 import dev.expx.ctrlctr.center.util.dependencies.resolver.DirectMavenResolver;
 import dev.expx.ctrlctr.center.util.dependencies.resolver.impl.SimpleLibraryStore;
-import dev.expx.ctrlctr.center.util.dependencies.resolver.lib.URLClassLoaderHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
@@ -15,6 +16,7 @@ import org.eclipse.aether.repository.RemoteRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.MalformedURLException;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.util.Map;
@@ -83,11 +85,15 @@ public class DepMngr {
         log.info("");
         log.info(lang.lang("dependency-footer"));
 
-        URLClassLoaderHelper helper = new URLClassLoaderHelper((URLClassLoader) iface.proxyInterface().getClass().getClassLoader());
+        URLClassLoaderAccess access = URLClassLoaderAccess.create((URLClassLoader) Statics.serverInterface.proxyInterface().getClass().getClassLoader());
         SimpleLibraryStore sls = new SimpleLibraryStore();
         resolver.register(sls);
         for(Path path : sls.getPaths()) {
-            helper.addToClasspath(path);
+            try {
+                access.addURL(path.toUri().toURL());
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
         }
 
     }

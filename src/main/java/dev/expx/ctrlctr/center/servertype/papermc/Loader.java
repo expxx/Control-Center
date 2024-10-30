@@ -8,16 +8,12 @@ import dev.expx.ctrlctr.center.modules.ModuleManager;
 import dev.expx.ctrlctr.center.util.dependencies.classpath.URLClassLoaderAccess;
 import dev.expx.ctrlctr.center.util.dependencies.resolver.DirectMavenResolver;
 import dev.expx.ctrlctr.center.util.dependencies.resolver.impl.SimpleLibraryStore;
-import dev.expx.ctrlctr.center.util.dependencies.resolver.lib.URLClassLoaderHelper;
-import io.papermc.paper.plugin.loader.PluginClasspathBuilder;
-import io.papermc.paper.plugin.loader.PluginLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
