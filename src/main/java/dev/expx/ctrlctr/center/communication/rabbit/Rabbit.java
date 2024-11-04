@@ -29,8 +29,6 @@ import java.util.function.Consumer;
 @SuppressWarnings("unused")
 public class Rabbit {
 
-    final Lang lang = Ctrlctr.getLang();
-
     /**
      * Handlers for RabbitMQ messages. These
      * are registered by the user and are
@@ -60,7 +58,7 @@ public class Rabbit {
                 }
             }
             if (exists) {
-                throw new AlreadyBoundException(lang.lang("rabbit-alreadyinit"));
+                throw new AlreadyBoundException("Queue already exists");
             } else {
                 registeredQueue = queue;
                 new Thread(() -> {
@@ -74,7 +72,6 @@ public class Rabbit {
                             connection = factory.newConnection();
                             channel = connection.createChannel();
                             channel.queueDeclare(queue, false, false, false, null);
-                            LoggerFactory.getLogger(Rabbit.class).info(lang.lang("rabbit-listening-one", queue));
 
                             DeliverCallback callback = (tag, deliver) -> {
                                 String msg = new String(deliver.getBody(), StandardCharsets.UTF_8);
@@ -83,19 +80,19 @@ public class Rabbit {
                             channel.basicConsume(queue, true, callback, tag -> {
                             });
                         } catch (Exception e) {
-                            LoggerFactory.getLogger(Rabbit.class).error(lang.lang("rabbit-error"));
+                            LoggerFactory.getLogger(Rabbit.class).error(e.getMessage());
                             Ctrlctr.setRabbitConnected(false);
                         }
                         Ctrlctr.setRabbitConnected(true);
-                        LoggerFactory.getLogger(Rabbit.class).info(lang.lang("rabbit-connected"));
+                        LoggerFactory.getLogger(Rabbit.class).info("RabbitMQ Connected");
                     } catch (Exception e) {
-                        LoggerFactory.getLogger(Rabbit.class).error(lang.lang("rabbit-error"));
+                        LoggerFactory.getLogger(Rabbit.class).error(e.getMessage());
                         Ctrlctr.setRabbitConnected(false);
                     }
                 }, "RabbitMQ [" + queue + "]").start();
             }
         } catch(Exception e) {
-            LoggerFactory.getLogger(Rabbit.class).error(lang.lang("rabbit-error"));
+            LoggerFactory.getLogger(Rabbit.class).error(e.getMessage());
             Ctrlctr.setRabbitConnected(false);
         }
     }
@@ -136,7 +133,7 @@ public class Rabbit {
             channel.queueDeclare(registeredQueue, false, false, false, null);
             channel.basicPublish("", registeredQueue, null, packet.toJSON().getBytes());
         } catch(IOException ex) {
-            LoggerFactory.getLogger(Rabbit.class).error(lang.lang("rabbit-cant-send", registeredQueue, ex.getMessage()));
+            LoggerFactory.getLogger(Rabbit.class).error(ex.getMessage());
         }
     }
 
@@ -148,7 +145,7 @@ public class Rabbit {
         try {
             channel.queueDelete(queue);
         } catch(IOException ex) {
-            LoggerFactory.getLogger(Rabbit.class).error(lang.lang("rabbit-cant-delete", queue, ex.getMessage()));
+            LoggerFactory.getLogger(Rabbit.class).error(ex.getMessage());
         }
     }
 
@@ -160,7 +157,7 @@ public class Rabbit {
             channel.close();
             connection.close();
         } catch(IOException | TimeoutException ex) {
-            LoggerFactory.getLogger(Rabbit.class).error(lang.lang("rabbit-cant-close", ex.getMessage()));
+            LoggerFactory.getLogger(Rabbit.class).error(ex.getMessage());
         }
     }
 

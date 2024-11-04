@@ -35,7 +35,6 @@ public class JSONRequest {
      */
     public static JsonObject request(String url, String requestMethod, Map<String, String> requestProperties, Boolean includeBody, byte[] body) throws IOException {
         try {
-            LoggerFactory.getLogger(JSONRequest.class).info(Ctrlctr.getLang().lang("http-json", url));
             URL requestUrl = new URI(url).toURL();
             HttpURLConnection con = (HttpURLConnection) requestUrl.openConnection();
             con.setRequestMethod(requestMethod);

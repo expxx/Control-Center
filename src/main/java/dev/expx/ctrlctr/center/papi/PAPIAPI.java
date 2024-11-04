@@ -23,7 +23,6 @@ public class PAPIAPI {
      */
     @SuppressWarnings("unused")
     public static void register(String id, PAPIExpansion.PlaceholderHandler<Player, String> handler) {
-        LoggerFactory.getLogger(PAPIAPI.class).info(Ctrlctr.getLang().lang("placeholder-register", id));
         PAPIExpansion.handlers.register(id, handler);
     }
 

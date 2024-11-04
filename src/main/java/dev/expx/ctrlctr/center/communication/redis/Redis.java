@@ -102,7 +102,7 @@ public class Redis {
                 this.jedis.psubscribe(pubSub, this.channel);
             }
         } catch(Exception e) {
-            LoggerFactory.getLogger(Redis.class).info(Ctrlctr.getLang().lang("redis-error"));
+            LoggerFactory.getLogger(Redis.class).info(e.getMessage());
             Ctrlctr.setRedisConnected(false);
         }
     }

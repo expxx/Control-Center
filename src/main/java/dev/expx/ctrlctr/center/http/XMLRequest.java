@@ -36,7 +36,6 @@ public class XMLRequest {
      */
     public static JsonObject request(String url, String requestMethod, Map<String, String> requestProperties, Boolean includeBody, byte[] body) throws IOException {
         try {
-            LoggerFactory.getLogger(XMLRequest.class).info(Ctrlctr.getLang().lang("http-xml", url));
             URL requestUrl = new URI(url).toURL();
             HttpURLConnection con = (HttpURLConnection) requestUrl.openConnection();
             con.setRequestMethod(requestMethod);

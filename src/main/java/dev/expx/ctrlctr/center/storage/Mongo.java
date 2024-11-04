@@ -66,7 +66,7 @@ public class Mongo {
      * @return The MongoDB Connection Handler
      */
     @ApiStatus.Internal
-    public Mongo connectMongo(ConnSet connSet, AuthSet authSet) {
+    public Mongo connectMongo(ConnSet connSet, AuthSet authSet, String dbName) {
         try {
             java.util.logging.Logger.getLogger("org.mongodb.driver").setLevel(java.util.logging.Level.SEVERE);
             java.util.logging.Logger.getLogger("org.mongodb.driver.client").setLevel(java.util.logging.Level.SEVERE);
@@ -85,23 +85,22 @@ public class Mongo {
                     .uuidRepresentation(UuidRepresentation.STANDARD)
                     .applyConnectionString(new ConnectionString(
                             "mongodb://" + authSet.user() + ":" + authSet.pass() + "@" + connSet.ip() + ":" +
-                                    connSet.port() + "/" + Ctrlctr.getInstance().getStorageConfig().getString("mongo.db") + "?authSource=admin"
+                                    connSet.port() + "/" + dbName + "?authSource=admin"
                     ))
                     .codecRegistry(pojoCodecRegistry)
                     .build();
-            l.info(lang.lang("init-mongo-connecting"));
             client = MongoClients.create(settings);
-            l.info(lang.lang("init-mongo-connected"));
-            database = client.getDatabase(Ctrlctr.getInstance().getStorageConfig().getString("mongo.db")).withCodecRegistry(pojoCodecRegistry);
-
-            l.info(lang.lang("init-mongo-loading-collections"));
-            playerDataMongoCollection = database.getCollection("players", PlayerData.class);
+            database = client.getDatabase(dbName).withCodecRegistry(pojoCodecRegistry);
             Ctrlctr.setMongoConnected(true);
             return this;
         } catch(Exception ex) {
-            LoggerFactory.getLogger(Mongo.class).error(lang.lang("init-mongo-error", ex.getMessage()));
+            LoggerFactory.getLogger(Mongo.class).error(ex.getMessage());
             Ctrlctr.setMongoConnected(false);
             return null;
         }
+    }
+
+    public void setPlayerDataMongoCollection(String collectionName) {
+        playerDataMongoCollection = database.getCollection(collectionName, PlayerData.class);
     }
 }

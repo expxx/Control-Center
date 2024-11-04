@@ -57,7 +57,7 @@ public class FileUtil {
      */
     @SuppressWarnings("unused")
     public static List<File> listInDir(File file, String extension) {
-        try { mkdir(file); } catch(IOException ex) { logger.error(Ctrlctr.getLang().lang("error-file-create-dir", ex.getMessage())); }
+        try { mkdir(file); } catch(IOException ex) { logger.error(ex.getMessage()); }
 
         if(file.listFiles() == null) return Collections.emptyList();
         return Arrays.stream(

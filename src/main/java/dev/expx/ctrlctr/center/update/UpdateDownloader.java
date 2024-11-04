@@ -23,12 +23,11 @@ public class UpdateDownloader {
 
     public static void download(String url, Path target, String expectedSha1, String expectedMd5) {
         try {
-            logger.info(lang.lang("updater-downloading", url, target.toAbsolutePath()));
             URL uri = new URI(url).toURL();
             try (InputStream in = uri.openStream()) {
                 Files.copy(in, target, StandardCopyOption.REPLACE_EXISTING);
                 if (!verifyChecksums(target, expectedSha1, expectedMd5)) {
-                    logger.error(lang.lang("updater-checksum-failed", target.toAbsolutePath()));
+                    logger.error("Checksum verification failed for " + target.getFileName());
                     Files.delete(target);
                 }
             } catch (IOException ignored) {}

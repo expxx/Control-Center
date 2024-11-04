@@ -39,9 +39,8 @@ public class UUIDUtils {
             if(obj.get("errorMessage") != null) { return ""; }
             return obj.get("id").getAsString();
         }catch(IOException e) {
-            LoggerFactory.getLogger(UUIDUtils.class).error(Ctrlctr.getLang().lang("http-uuid-fetch-error", e.getMessage()));
+            throw new RuntimeException(e.getMessage());
         }
-        return "";
     }
 
     /**
@@ -54,7 +53,7 @@ public class UUIDUtils {
     @SuppressWarnings("unused")
     public static UUID fromTrimmed(String input) {
         if (!isUuid(input)) {
-            throw new IllegalArgumentException(Ctrlctr.getLang().lang("http-uuid-not-uuid", input));
+            throw new IllegalArgumentException("Input not UUID");
 
         } else if (input.contains("-")) {
             // Already has hyphens

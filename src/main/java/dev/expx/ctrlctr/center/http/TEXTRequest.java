@@ -33,7 +33,6 @@ public class TEXTRequest {
      */
     public static String request(String url, String requestMethod, Map<String, String> requestProperties, Boolean includeBody, byte[] body) throws IOException {
         try {
-            LoggerFactory.getLogger(TEXTRequest.class).info(Ctrlctr.getLang().lang("http-text", url));
             URL requestUrl = new URI(url).toURL();
             HttpURLConnection con = (HttpURLConnection) requestUrl.openConnection();
             con.setRequestMethod(requestMethod);

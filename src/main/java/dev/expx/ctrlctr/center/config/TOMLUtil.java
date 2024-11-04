@@ -2,6 +2,7 @@ package dev.expx.ctrlctr.center.config;
 
 import com.moandjiezana.toml.Toml;
 import dev.expx.ctrlctr.center.Ctrlctr;
+import dev.expx.ctrlctr.center.logger.errors.ConfigLoadException;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
@@ -49,7 +50,7 @@ public class TOMLUtil {
             try {
                 Files.copy(is, file.toPath());
             } catch(IOException ex) {
-                LoggerFactory.getLogger(TOMLUtil.class).error(Ctrlctr.getLang().lang("config-savefail", ex.getMessage()));
+                throw new ConfigLoadException(ex.getMessage());
             }
         return parse(file);
     }

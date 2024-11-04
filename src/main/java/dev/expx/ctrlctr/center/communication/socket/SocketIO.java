@@ -56,7 +56,6 @@ public class SocketIO {
             Bukkit.getScheduler().runTaskTimerAsynchronously(Ctrlctr.getInstance(), () -> {
                 if (!pendingRegistration.isEmpty() && (!io.connected())) {
                     for (SocketListener listener : pendingRegistration) {
-                        l.info(Ctrlctr.getLang().lang("socket-start", listener.getName()));
                         io.on(listener.getChannel(), obj -> {
                             if (Arrays.stream(obj).toList().getLast() instanceof Ack ack) {
                                 listener.listen(obj, ack);
@@ -82,10 +81,8 @@ public class SocketIO {
     public static void register(SocketListener listener) {
         if (io != null) {
             if (!io.connected()) {
-                l.info(Ctrlctr.getLang().lang("socket-pending", listener.getName(), listener.getClass().getName()));
                 pendingRegistration.add(listener);
             } else {
-                l.info(Ctrlctr.getLang().lang("socket-live", listener.getName(), listener.getClass().getName()));
                 io.on(listener.getChannel(), obj -> {
                     if (Arrays.stream(obj).toList().getLast() instanceof Ack ack) {
                         listener.listen(obj, ack);
@@ -95,7 +92,6 @@ public class SocketIO {
                 });
             }
         } else {
-            l.info(Ctrlctr.getLang().lang("socket-noio", listener.getName(), listener.getClass().getName()));
             pendingRegistration.add(listener);
         }
     }

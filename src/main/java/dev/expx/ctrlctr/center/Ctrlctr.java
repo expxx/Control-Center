@@ -126,7 +126,8 @@ public final class Ctrlctr extends JavaPlugin {
                 storageConfig.getString("mongo.user"),
                 storageConfig.getString("mongo.pass")
         );
-        mongo = new Mongo().connectMongo(mongoConnSet, mongoAuthSet);
+        mongo = new Mongo().connectMongo(mongoConnSet, mongoAuthSet, storageConfig.getString("mongo.db"));
+        mongo.setPlayerDataMongoCollection("players");
         getLogger().info("");
 
 
