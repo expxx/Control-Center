@@ -6,7 +6,7 @@
 
     <groupId>dev.expx.ctrlctr</groupId>
     <artifactId>ctrlctr</artifactId>
-    <version>1.1.1</version>
+    <version>1.1.1.1</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -34,6 +34,7 @@
         <plugins>
             <plugin>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.11.1</version>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>

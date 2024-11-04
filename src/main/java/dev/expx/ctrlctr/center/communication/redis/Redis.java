@@ -65,10 +65,10 @@ public class Redis {
             this.jedis.connect();
 
             new Thread(this::subscribe).start();
-            LoggerFactory.getLogger(Redis.class).info(Ctrlctr.getLang().lang("redis-connected"));
+            LoggerFactory.getLogger(Redis.class).info("Redis connected");
             Ctrlctr.setRedisConnected(true);
         } catch(Exception e) {
-            LoggerFactory.getLogger(Redis.class).info(Ctrlctr.getLang().lang("redis-error"));
+            LoggerFactory.getLogger(Redis.class).error(e.getMessage());
             Ctrlctr.setRedisConnected(false);
         }
     }
