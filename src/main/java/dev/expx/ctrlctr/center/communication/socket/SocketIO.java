@@ -38,7 +38,10 @@ public class SocketIO {
 
     /**
      * Connects to a socket server.
-     *
+     * <p></p>
+     * WARNING: This will not work without
+     * running Ctrlctr on a SPIGOT SERVER.
+     * <p></p>
      * @param connSet The connection data.
      * @param secure  Whether the connection is secure.
      * @return {@link Socket} The socket.

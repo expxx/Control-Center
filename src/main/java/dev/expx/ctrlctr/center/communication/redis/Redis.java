@@ -1,6 +1,5 @@
 package dev.expx.ctrlctr.center.communication.redis;
 
-import dev.expx.ctrlctr.center.Ctrlctr;
 import dev.expx.ctrlctr.center.communication.data.DataSet;
 import dev.expx.ctrlctr.center.communication.data.Packet;
 import dev.expx.ctrlctr.center.datastore.Registry;
@@ -66,10 +65,8 @@ public class Redis {
 
             new Thread(this::subscribe).start();
             LoggerFactory.getLogger(Redis.class).info("Redis connected");
-            Ctrlctr.setRedisConnected(true);
         } catch(Exception e) {
             LoggerFactory.getLogger(Redis.class).error(e.getMessage());
-            Ctrlctr.setRedisConnected(false);
         }
     }
 
@@ -104,7 +101,6 @@ public class Redis {
         } catch(Exception e) {
             LoggerFactory.getLogger(Redis.class).error(e.getMessage());
             e.printStackTrace();
-            Ctrlctr.setRedisConnected(false);
         }
     }
 

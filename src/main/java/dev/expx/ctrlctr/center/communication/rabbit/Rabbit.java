@@ -4,20 +4,17 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
-import dev.expx.ctrlctr.center.Ctrlctr;
 import dev.expx.ctrlctr.center.communication.data.Packet;
 import dev.expx.ctrlctr.center.communication.data.AuthSet;
 import dev.expx.ctrlctr.center.communication.data.ConnSet;
 import dev.expx.ctrlctr.center.datastore.Registry;
 import dev.expx.ctrlctr.center.datastore.implementations.EclipseStore;
-import dev.expx.ctrlctr.center.lang.Lang;
 import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.rmi.AlreadyBoundException;
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
@@ -81,19 +78,15 @@ public class Rabbit {
                             });
                         } catch (Exception e) {
                             LoggerFactory.getLogger(Rabbit.class).error(e.getMessage());
-                            Ctrlctr.setRabbitConnected(false);
                         }
-                        Ctrlctr.setRabbitConnected(true);
                         LoggerFactory.getLogger(Rabbit.class).info("RabbitMQ Connected");
                     } catch (Exception e) {
                         LoggerFactory.getLogger(Rabbit.class).error(e.getMessage());
-                        Ctrlctr.setRabbitConnected(false);
                     }
                 }, "RabbitMQ [" + queue + "]").start();
             }
         } catch(Exception e) {
             LoggerFactory.getLogger(Rabbit.class).error(e.getMessage());
-            Ctrlctr.setRabbitConnected(false);
         }
     }
 
