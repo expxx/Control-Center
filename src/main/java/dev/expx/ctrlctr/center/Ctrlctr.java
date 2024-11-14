@@ -29,7 +29,6 @@ import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import lombok.Getter;
 import lombok.Setter;
 import net.milkbowl.vault.economy.Economy;
-import org.apache.logging.log4j.spi.LoggerContext;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -111,11 +110,11 @@ public final class Ctrlctr extends JavaPlugin {
 
         storageConfig = YMLUtil.createConfig(
                 new File(this.getDataFolder(), "storage.yml"),
-                Objects.requireNonNull(getResource("storage.yml"))
+                Objects.requireNonNull(getResource("storage-ctrlctr.yml"))
         );
         mainConfig = YMLUtil.createConfig(
                 new File(this.getDataFolder(), "config.yml"),
-                Objects.requireNonNull(getResource("config.yml"))
+                Objects.requireNonNull(getResource("config-ctrlctr.yml"))
         );
 
         mongoConnSet = new ConnSet(

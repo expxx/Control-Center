@@ -55,7 +55,7 @@ public class Mongo {
     /**
      * Create a connection for a MongoDB Server
      * This is an internal method, and called to the
-     * configured MongoDB Server in the config.yml.
+     * configured MongoDB Server in the config-ctrlctr.yml.
      * <p>
      * If access to the database is required in modules,
      * use Mongo#getDatabase() or Mongo#getClient()
